@@ -74,8 +74,16 @@ def test_public_demo_disables_uploads(monkeypatch):
 
 
 def _design_app():
-    script = (f"import sys\nsys.path.insert(0, {str(ROOT)!r})\n"
-              "import streamlit as st\nst.cache_resource.clear()\nfrom ui.design import design\ndesign()\n")
+    """Home page with PVGIS replaced by the saved Kathmandu responses (no network in tests)."""
+    fx = ROOT / "tests" / "fixtures"
+    script = (f"import sys, json\nsys.path.insert(0, {str(ROOT)!r})\n"
+              "import streamlit as st\nst.cache_resource.clear()\n"
+              "import ui.design as d\nfrom ecalc.solar_data import parse_pvgis\nfrom ecalc.profile import parse_drcalc\n"
+              f"PV = json.load(open({str(fx / 'pvgis_kathmandu_1kwp.json')!r}))\n"
+              f"DR = json.load(open({str(fx / 'pvgis_drcalc_kathmandu.json')!r}))\n"
+              "d.fetch_pvgis = lambda lat, lon, *a, **k: parse_pvgis(PV, lat, lon)\n"
+              "d.fetch_daily_profiles = lambda *a, **k: parse_drcalc(DR)\n"
+              "d.design()\n")
     at = AppTest.from_string(script, default_timeout=60)
     at.run()
     return at
@@ -85,59 +93,68 @@ def _by_label(items, label):
     return next(x for x in items if x.label == label)
 
 
-def _add_appliance(at, item, qty, hours, critical):
+def _add_appliance(at, item, qty, hours=None, critical=False):
     _by_label(at.selectbox, "Appliance").set_value(item)
     _by_label(at.number_input, "How many?").set_value(qty)
-    _by_label(at.number_input, "Hours ON per day").set_value(hours)
+    if hours is not None:
+        _by_label(at.number_input, "Hours ON per day").set_value(hours)
     if critical:
         _by_label(at.checkbox, "Needed during power cuts").check()
     _by_label(at.button, "➕ Add to list").click().run()
 
 
-def test_design_page_layman_flow(temp_data):
-    """A non-engineer answers the plain questions (offline: peak sun hours) and gets the plain summary.
-    Hand calc: fridge 150 W x 10 h + 10 LED x 10 W x 6 h = 2.1 kWh/day; backup 0.25 kW x 4 h = 1.0 kWh usable;
-    nominal 1.0 / 0.8 / 0.95 = 1.3 kWh. PSH 5, 23 % losses: Y = 1405.25 -> 0.546 kWp -> 1 x 550 Wp panel."""
+def _common_answers(at, mode):
+    _by_label(at.text_input, "Project name *").set_value("Test house")
+    _by_label(at.selectbox, "Nearest place in Nepal *").set_value("Kathmandu - Bagmati Province")
+    _by_label(at.radio, "What kind of roof? *").set_value("Flat roof - panels go on a metal frame")
+    _by_label(at.radio, "Choose one *").set_value(mode).run()
+
+
+def test_home_hybrid_with_bill_and_backup(temp_data):
+    """Bill 250 units + backup fridge (150 W) & 8 LED (80 W) for 4 h -> battery usable 230/0.94*4/0.95 = 1.030 kWh."""
     at = _design_app()
     assert not at.exception, [e.value for e in at.exception]
-    _by_label(at.text_input, "Project name *").set_value("Test clinic")
-    _by_label(at.selectbox, "Nearest city *").set_value("Kathmandu, Nepal")
-    _by_label(at.radio, "What kind of roof? *").set_value("Flat roof - panels go on a metal frame")
-    _by_label(at.radio, "Choose one *").set_value("I'll list my appliances").run()
-    _add_appliance(at, "Refrigerator", 1, 10.0, True)
-    _add_appliance(at, "LED bulb", 10, 6.0, True)
-    _by_label(at.radio, "Do you want electricity during power cuts? *").set_value(
-        "Yes - keep some things running during power cuts (with battery)").run()
-    _by_label(at.number_input, "Longest power cut on a normal day (hours) *").set_value(4.0)
-    _by_label(at.selectbox, "Type of electricity supply *").set_value("Single-phase 230 V (most homes and shops)")
-    _by_label(at.radio, "Sunshine data").set_value("Enter peak sun hours").run()
-    _by_label(at.number_input, "Peak sun hours *").set_value(5.0)
+    _common_answers(at, "Hybrid - lower my bill AND keep power during load-shedding")
+    next(r for r in at.radio if r.key == "h_how").set_value("I have my NEA bill").run()
+    _by_label(at.number_input, "Units used per month (kWh) *").set_value(250.0)
+    _by_label(at.number_input, "Longest power cut on a normal day (hours) *").set_value(4.0).run()
+    _add_appliance(at, "Refrigerator", 1)
+    _add_appliance(at, "LED bulb", 8)
+    _by_label(at.selectbox, "Your NEA meter *").set_value("Single-phase 15 A (most homes)")
     _by_label(at.button, "Calculate my solar system").click().run()
     assert not at.exception, [e.value for e in at.exception]
     assert not at.error, [e.value for e in at.error]
     text = at.success[0].value
-    assert "1 solar panel of 550 W" in text and "1.3 kWh in total" in text and "1.0 kWh can be used" in text
+    assert "solar panel" in text and "Battery:" in text and "NEA bill" in text
+    inv_kw = at.session_state["home_out"]["inverter_kw"]
+    assert inv_kw >= at.session_state["home_out"]["kwp"] / 1.2 - 1e-9     # hybrid inverter carries the whole array
     projects = Store(temp_data / "ecalc.db").list_projects()
-    assert projects[0]["name"] == "Test clinic" and projects[0]["n_calcs"] == 5
-    _by_label(at.button, "Calculate my solar system").click().run()    # recalculating updates, no duplicate
-    projects = Store(temp_data / "ecalc.db").list_projects()
-    assert len(projects) == 1 and projects[0]["n_calcs"] == 5
+    assert projects[0]["name"] == "Test house"
+    out = at.session_state["home_out"]
+    assert out["battery_usable_kwh"] == pytest.approx(230 / 0.94 * 4 / 0.95 / 1000, rel=1e-6)
+    # recalculating the same project updates it instead of duplicating
+    _by_label(at.button, "Calculate my solar system").click().run()
+    assert len(Store(temp_data / "ecalc.db").list_projects()) == 1
 
 
-def test_design_page_lists_unanswered_questions():
+def test_home_off_grid_with_appliances(temp_data):
+    at = _design_app()
+    _common_answers(at, "Off-grid - no NEA connection at the site")
+    _add_appliance(at, "LED bulb", 6, 5.0)
+    _add_appliance(at, "Laptop", 1, 4.0)
+    _by_label(at.number_input, "Days the battery must last without sun *").set_value(2.0)
+    _by_label(at.button, "Calculate my solar system").click().run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert not at.error, [e.value for e in at.error]
+    assert at.session_state["home_out"]["mode"] == "off_grid"
+
+
+def test_home_lists_unanswered_questions():
     at = _design_app()
     _by_label(at.button, "Calculate my solar system").click().run()
     msg = at.error[0].value
-    for q in ("Project name", "Nearest city", "Kind of roof", "Electricity use", "Power cuts", "Type of electricity supply"):
+    for q in ("Project name", "Nearest place", "Kind of roof", "System type", "Electricity use"):
         assert q in msg
-
-
-def test_loss_default_depends_on_solar_data_mode():
-    """PVGIS adds temperature/reflection losses itself (14% system loss); peak-sun-hours mode needs ~23% total."""
-    at = _design_app()
-    assert _by_label(at.number_input, "System losses (%)").value == 14.0
-    _by_label(at.radio, "Sunshine data").set_value("Enter peak sun hours").run()
-    assert _by_label(at.number_input, "Total losses (%)").value == 23.0
 
 
 def test_pf_page_meter_mode_shows_hand_calc():

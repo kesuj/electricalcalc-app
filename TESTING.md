@@ -3,7 +3,7 @@
 Run: `.venv\Scripts\python -m pytest`
 
 ## Test report: 2026-10-29, v0.1.0 (Windows 11, Python 3.14.7)
-**108 passed, 0 failed** (v0.3.1: calculator pages now tested by typing values into empty boxes; adds layman-flow, unanswered-question, outage-hours backup, plain-summary and report-summary tests; adds load-schedule and full-design workflow tests with hand-calculated values, and an end-to-end run of the New project design page).
+**156 passed, 0 failed** (v0.4.0: adds the books' worked examples (home and farm, with errata corrected), NEA slab bills, hourly simulation, finance, string sizing, Home and Farm page flows; earlier: adds layman-flow, unanswered-question, outage-hours backup, plain-summary and report-summary tests; adds load-schedule and full-design workflow tests with hand-calculated values, and an end-to-end run of the New project design page).
 
 | File | Tests | Covers |
 |---|---|---|

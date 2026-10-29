@@ -120,6 +120,16 @@ H: dict[str, tuple[str, str]] = {
                   "The power factor you want to reach. Check the utility's minimum PF requirement for the tariff "
                   "category; 0.95 is a common target."),
     "pf_volts": ("e.g. 400", "Line-to-line voltage at the capacitor bank, for µF per phase."),
+    # ---- solar farm (appended) ----------------------------------------------------------------
+    "farm_mwp": ("e.g. 10 (MW of panels)",
+                 "Plant size in megawatts of panels (DC, MWp). NEA's 2024 solar tender capped projects at 150 MW; "
+                 "awarded projects averaged about 15 MW."),
+    "farm_ac_mw": ("Export limit; blank = inverters",
+                   "Maximum AC power NEA lets you export (from the connection agreement / PPA), in MW. Leave blank to "
+                   "use the total inverter rating."),
+    "farm_tmin": ("Record low at site (°C)",
+                  "Coldest temperature ever recorded near the site (DHM records). Panels make their highest voltage "
+                  "on cold, clear mornings, so this sets the maximum string length. Kathmandu -3.5, Jumla -15."),
 }
 
 

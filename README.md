@@ -7,6 +7,8 @@
 ![Solar sizing](docs/screenshots/2_solar.png)
 
 ## Features
+- **🏠 Home solar (Nepal)** - method of Boxwell's *Solar Electricity Handbook*, modern data: plain questions (city, roof, NEA bill or appliances, load-shedding hours, meter), panels/inverter/battery/cables, month-by-month **NEA slab bill** with net billing, an interactive **day with a power cut**, and payback/IRR with sliders.
+- **🏭 Solar farm (Nepal)** - method of Neill, Stapleton & Martell's *Solar Farms*: P50/P90 energy, row spacing and land in ha/bigha/ropani, 5-step string & inverter matching with cold-morning safety check, loss waterfall, LCOE/IRR vs NEA PPA rates.
 - **Plan a solar system (start page), usable by non-engineers:** five plain questions (city, roof, electricity bill or appliances, power cuts, supply type), empty boxes with hints on how to find each value, an appliance picker with typical wattages, and engineer settings with standard values. One click gives a plain-words summary, all calculations (load schedule, PV, inverter, battery, cable voltage drop) and the full PDF report.
 - **Solar PV sizing (grid-tied / hybrid):**
   - real yield data from [PVGIS](https://re.jrc.ec.europa.eu/pvg_tools/) (EC JRC), or your own peak-sun-hours value
@@ -40,7 +42,7 @@ AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay
 ```powershell
 .venv\Scripts\python -m pytest
 ```
-The 108 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
+The 156 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
 
 ## Documentation
 [ARCHITECTURE](ARCHITECTURE.md) · [ENGINEERING_METHODS](ENGINEERING_METHODS.md) · [SECURITY](SECURITY.md) · [TESTING](TESTING.md) · [CHANGELOG](CHANGELOG.md)

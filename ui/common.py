@@ -48,7 +48,7 @@ def render_result(r: CalcResult, key_outputs: list[str] | None = None) -> None:
     st.table({"Result": [q.label or k for k, q in r.outputs.items()], "Value": [fmt_q(q) for q in r.outputs.values()]})
     for name, rows in r.tables.items():
         st.markdown(f"##### {name}")
-        st.dataframe(rows, use_container_width=True, hide_index=True)
+        st.dataframe(rows, width="stretch", hide_index=True)
     if r.warnings:
         for w in r.warnings:
             st.warning(w, icon="⚠️")

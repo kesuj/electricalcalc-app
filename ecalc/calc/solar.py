@@ -23,6 +23,7 @@ class SolarResource:
     annual_kwh_per_kwp: float
     source: str
     monthly_kwh_per_kwp: list[float] = field(default_factory=list)
+    monthly_irr_kwh_m2_day: list[float] = field(default_factory=list)   # in-plane, PVGIS H(i)_d
     losses_included: bool = True
     details: dict = field(default_factory=dict)
 

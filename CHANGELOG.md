@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0 - 2026-10-29
+### Added
+- **🏠 Home solar** rebuilt on the method of Boxwell, *Solar Electricity Handbook* (step order, formulas, worked example as tests), with modern Nepal data: PVGIS site sunshine, LiFePO4, NEPQA-2025 floors, three system types (grid-tied, hybrid with load-shedding backup, off-grid).
+- Month-by-month **NEA bill** with and without solar (ERC 2078 slab tariff, net-billing export credit), from an hourly simulation of an average day per month (PVGIS daily profiles, Nepal time).
+- Interactive tabs: monthly chart and bills, **a day with a power cut** (month / start / length / usage-shape sliders), **money** (price rise, panel ageing, discount sliders; payback, IRR, 25-year gain; battery replacement), engineering details, report.
+- **🏭 Solar farm** page on the method of Neill, Stapleton & Martell, *Solar Farms*: energy (P50/P90), layout & land (ha / bigha / ropani, row-spacing diagram, shade-free window), 5-step string & inverter matching with cold-morning safety check, editable losses with waterfall, LCOE / IRR / NPV vs NEA PPA rate, report.
+- Nepal data module with sources and tags; 27 Nepal sites; string sizing (IEC 62548 approach); finance module (cash flow, IRR, LCOE).
+### Fixed
+- Errors in both books' printed examples corrected (see ENGINEERING_METHODS.md E-F).
+- Grid-tied systems now correctly supply nothing during a power cut (anti-islanding).
+- Hybrid inverter now sized for the whole array, not only the backup loads.
+- Appliance form no longer submits when Enter is pressed in a box.
+- Negative values (e.g. falling prices) accepted where valid.
+
 ## 0.3.1 - 2026-10-29
 ### Changed
 - **Solar PV sizing**, **Cable voltage drop** and **Power-factor correction** pages: every box now starts empty with short grey hint text saying where to find or measure the value (full explanation on each box's ? icon); results appear only when the required boxes are filled, and the still-empty ones are listed.

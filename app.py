@@ -5,15 +5,18 @@ import streamlit as st
 from ecalc import config
 from ui import pages
 from ui.design import design
+from ui.farm import farm
 
 st.set_page_config(page_title=config.APP_NAME, page_icon="⚡", layout="wide")
 
 nav = st.navigation({
-    config.APP_NAME: [st.Page(design, title="Plan a solar system", icon="☀️", default=True),
-                     st.Page(pages.report_page, title="My projects & reports", icon="📁", url_path="reports")],
-    "Calculations": [st.Page(pages.solar, title="Solar PV sizing", icon="☀️", url_path="solar"),
-                     st.Page(pages.cable, title="Cable voltage drop", icon="🧵", url_path="cable")],
-    "Extra tools": [st.Page(pages.pf_page, title="Power-factor correction", icon="⚡", url_path="pf-correction")],
+    "Design a solar system (Nepal)": [
+        st.Page(design, title="Home solar", icon="🏠", default=True),
+        st.Page(farm, title="Solar farm", icon="🏭", url_path="farm"),
+        st.Page(pages.report_page, title="My projects & reports", icon="📁", url_path="reports")],
+    "Quick calculators": [st.Page(pages.solar, title="Solar PV sizing", icon="☀️", url_path="solar"),
+                          st.Page(pages.cable, title="Cable voltage drop", icon="🧵", url_path="cable"),
+                          st.Page(pages.pf_page, title="Power-factor correction", icon="⚡", url_path="pf-correction")],
     "AI": [st.Page(pages.assistant, title="AI assistant", icon="🤖", url_path="assistant"),
            st.Page(pages.docs, title="Documents", icon="📚", url_path="documents")],
     "System": [st.Page(pages.settings, title="Settings & providers", icon="⚙️", url_path="settings"),

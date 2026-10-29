@@ -52,3 +52,42 @@ No load-flow, short-circuit or protection-coordination results are produced. ETA
 | 3φ 400 V, 50 A, 100 m, 16 mm² Cu, PF 0.85, X 0.08 mΩ/m | ΔV = 10.49 V = 2.62% |
 | 10 kWh/day, PSH 5, 20% loss, 550 Wp | Y = 1460, 2.5 kWp needed, 5 panels, 4015 kWh/yr |
 | 5 kWh backup, DoD 80%, η 95%, 48 V | 6.579 kWh nominal, 137.1 Ah |
+
+## E. Home solar (`ecalc/calc/home.py`) - method from Boxwell, *Solar Electricity Handbook* (2012)
+Book step order (§41): power analysis → inefficiencies → solar resource → array → system voltage → battery →
+controller → inverter → cables. **Method from the book, data modern and Nepal-specific.**
+
+| Step | Formula (book §) | Modern / Nepal data used instead of the book's |
+|---|---|---|
+| Power analysis | daily Wh = Σ W × qty × h; peak = Σ W (§48) | Nepal appliance list with typical watts (user must check labels) |
+| Inefficiencies | Design Wh = DC Wh + AC Wh ÷ η_inv (÷ η_batt off-grid) (§50) | **Divide** by efficiency (book multiplies by 1+loss); η_inv 94 % (NEPQA-2025 floor) |
+| Sun | worst required month (off-grid) / annual average (grid) (§46, §56) | PVGIS monthly in-plane irradiation for the exact site (book: UK/US NASA tables) |
+| Array | W = Design Wh ÷ sun h ÷ (η_ctrl 0.9 MPPT / 0.75 PWM) ÷ (1 − temp) ÷ (1 − shade) (§56-§59) | Temperature loss from PVGIS for the site (book: air °C × 1.4, only ≥ 25 °C) |
+| Voltage | lowest of 12/24/48 V with book cable ≤ 6 mm²; 12 V ≤ 3 kW (§85, §91) | - |
+| Battery | Wh = Design Wh × days ÷ DoD (§89) | **Nepal power-cut mode**: backup W × outage h ÷ η_inv ÷ η_batt; LiFePO4 90 % DoD (not in book) |
+| Controller | A = array W ÷ V × 1.25 | book gives no margin (§90) |
+| Inverter | ≥ 4/3 × simultaneous load (§91) | hybrid: also ≥ array ÷ 1.2 (it converts all solar) |
+| Cable | mm² = L × I × 0.04 ÷ (V ÷ 20) (§87) = 5 % drop, copper | - |
+| Money | not in book | NEA slab bill (ERC 2078) month by month, hourly self-use vs export (net billing Rs 5.94), 25-yr cash flow |
+
+**Book errors found and corrected:** 48 V cable 1.63 → **1.29 mm²** (W8); load table total 662 → 661 Wh; m² ↔ ft² 9.9 → 10.76;
+battery example sizes at 80 % DoD while recommending 50 %; text says 48 V peaks at 88 V, table 80 V.
+
+## F. Solar farm (`ecalc/calc/farm.py`) - method from Neill, Stapleton & Martell, *Solar Farms* (Earthscan)
+| Step | Formula (book page) | Notes |
+|---|---|---|
+| Tilt | = latitude, min 10° (Box 4.1) | |
+| Row spacing | d = l·cosβ + l·sinβ·cosλ / tanα (p.102) | α, λ from solar geometry on 21 Dec; default shade-free **9 am-3 pm** (book minimum = noon only; book target < 1 %/yr loss) |
+| Strings | N_min = ceil(V_MPPT,min / (Vmp(70 °C) × 0.98 × 0.9)); N_max = floor(V_DC,max / (Voc(T_min) × 1.05)) (pp.105-116) | inequality printed reversed in book - corrected |
+| Strings in parallel | floor(I_DC,max / Isc) | |
+| PR | Π (1 − loss) (p.148) | book prints Σ; transformer 13 % loss in book example is implausible - default 1 % |
+| Energy | MWp × sun h × 365 × PR (p.81) | sun hours = PVGIS in-plane for the site; P90 = P50 × (1 − 1.282σ) |
+| Land | module area ÷ GCR × (1 + extra) | not in book; cross-check NEA 2024 tender ≈ 2.1 ha/MW, LBNL ≈ 1.2 ha/MWdc |
+| Money | LCOE = Σ disc. costs / Σ disc. energy (pp.63-67) | NEA PPA Rs 4.99-5.54/kWh (2024 tender), capex ≈ Rs 65k/kW (indicative) |
+
+**Book errors found and corrected (pp.113-116, 100 MWp example):** Voc at 5 °C printed 40.69 V, correct **41.95 V**;
+N_max printed 23.87, correct 23.41 (22.70 with corrected Voc). With corrected numbers the book's chosen 24-module string
+reaches **1,007 V on a 5 °C morning - above the inverter's 1,000 V limit** (no feasible string length). The app flags this.
+
+**Known optimism:** PVGIS (ERA5) yields for the Terai (~1,600 kWh/kWp) are above the 1,100-1,400 kWh/kWp reported for
+Nepali plants (secondary source) - winter fog/haze; use P90 and local measured data for bankable work.

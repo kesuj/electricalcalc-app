@@ -229,7 +229,7 @@ def report_page():
     if projects:
         st.dataframe([{"ID": p["id"], "Project": p["name"] + (" [DEMO]" if p["is_demo"] else ""),
                        "Client": p["client"], "Location": p["location"], "Calculations": p["n_calcs"],
-                       "Updated (UTC)": p["updated"]} for p in projects], hide_index=True, use_container_width=True)
+                       "Updated (UTC)": p["updated"]} for p in projects], hide_index=True, width="stretch")
     with st.expander("Create an empty project (to save results from the individual calculator pages)"):
         with st.form("new_project", clear_on_submit=True):
             a, b, c = st.columns(3)
@@ -258,7 +258,7 @@ def report_page():
         st.info("This project has no saved calculations yet.")
     else:
         st.dataframe([{"ID": c["id"], "Type": c["kind"], "Title": c["title"], "Saved (UTC)": c["created"]} for c in calcs],
-                     hide_index=True, use_container_width=True)
+                     hide_index=True, width="stretch")
         chosen = st.multiselect("Calculations to include", [c["id"] for c in calcs], default=[c["id"] for c in calcs],
                                 format_func=lambda i: next(f"#{c['id']} {c['title']}" for c in calcs if c["id"] == i))
         st.subheader("Report details")
@@ -387,7 +387,7 @@ def docs():
         st.info("No documents indexed yet.")
         return
     st.dataframe([{"ID": d["id"], "File": d["filename"], "Pages": d["pages"], "Characters": d["chars"],
-                   "Added (UTC)": d["created"]} for d in docs_], hide_index=True, use_container_width=True)
+                   "Added (UTC)": d["created"]} for d in docs_], hide_index=True, width="stretch")
     q = st.text_input("Question or keywords")
     if q:
         hits = documents.search(store.all_chunks(), q, k=5)
@@ -429,7 +429,7 @@ def settings():
         ok, why = p.status()
         rows.append({"Provider": p.label, "Model": p.model or "-", "Status": "Ready" if ok else "Not ready",
                      "Detail": why, "Cost type": "Paid / credits" if p.paid else "Free"})
-    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.dataframe(rows, hide_index=True, width="stretch")
     st.subheader("Cost controls")
     st.markdown(f"- Monthly paid-AI budget: **${config.MONTHLY_AI_BUDGET_USD:.2f}** "
                 f"({'paid providers BLOCKED' if config.MONTHLY_AI_BUDGET_USD <= 0 else 'enforced'})\n"
@@ -455,7 +455,7 @@ def usage():
         st.dataframe([{"Time (UTC)": r["ts"], "Provider": r["provider"], "Model": r["model"], "Purpose": r["purpose"],
                        "In tok": r["input_tokens"], "Out tok": r["output_tokens"], "Cost $": round(r["cost_usd"], 6),
                        "OK": "yes" if r["ok"] else "no", "Error": r["error"], "Seconds": round(r["duration_s"] or 0, 1)}
-                      for r in rows], hide_index=True, use_container_width=True)
+                      for r in rows], hide_index=True, width="stretch")
     else:
         st.info("No AI requests yet. Calculations, reports and document search never use AI and cost nothing.")
     st.subheader("Estimated cost per 1,000 requests (pricing table, verify on provider sites)")
@@ -465,21 +465,25 @@ def usage():
 
 def help_page():
     page_header("❓ Help")
-    st.markdown(f"""
-**What {config.APP_NAME} does**
-- Preliminary solar PV sizing (grid-tied / hybrid) with PVGIS data or your own peak sun hours.
-- Power-factor correction: capacitor kvar and µF, with the existing PF taken from kWh/kVArh meter readings or entered directly.
-- Cable voltage drop using IEC 60228 conductor resistances, and minimum size by voltage-drop criterion.
-- Draft PDF / Markdown reports with inputs, equations, results, assumptions, warnings and a review record.
-- An optional AI assistant that *explains* results, plus a local document search with page citations.
+    st.markdown("""
+**Two designers, both for Nepal**
 
-**What it does not do**
-- It does not produce certified, stamped or construction-ready designs.
-- It does not select final cables (ampacity, protection and short-circuit checks are not implemented).
-- It does not perform load-flow, short-circuit or protection-coordination studies.
-- The AI never computes engineering values; if it states a number not in the calculation, treat it as an error.
+| | 🏠 Home solar | 🏭 Solar farm |
+|---|---|---|
+| Who | Houses, shops, offices, health posts, schools | Grid-connected plants selling to NEA (MW scale) |
+| Method from | Boxwell, *Solar Electricity Handbook* | Neill, Stapleton & Martell, *Solar Farms* |
+| Data | PVGIS for your exact site, NEA slab tariff (ERC 2078), net-billing export rate, NEPQA-2025, 2026 Nepal prices | PVGIS, NEA solar PPA rates (2024 tender), NEPQA-2025, utility costs |
+| You get | Panels, inverter, battery, cables, month-by-month NEA bill, a day with load-shedding, payback | Energy (P50/P90), layout & land (ha / bigha / ropani), strings & inverters, losses, LCOE, IRR |
 
-**Typical workflow:** Plan a solar system → answer the questions → Calculate → download the full report → engineer review. Saved projects are under My projects & reports.
+**How to use:** answer the questions (the grey text in each box tells you how), press Calculate, then explore the
+tabs and move the sliders - the charts update instantly. Download the PDF report at the end.
 
-See `README.md` and `ENGINEERING_METHODS.md` in the project folder for full details.
+**Quick calculators** answer single questions (solar size, one cable's voltage drop, a capacitor bank).
+
+**Honest limits**
+- Preliminary designs only - a licensed engineer must check site, equipment and protection before purchase.
+- The books are from 2012-2016: their *methods* are used, but all *data* is current (sources listed in each page).
+  Errors found in the books' printed examples are corrected (see ENGINEERING_METHODS.md).
+- Tariffs, net-billing rules and prices change; the date each was checked is shown with the source.
+- Cable sizes are by voltage drop only; current rating, protection and earthing must be designed separately.
 """)

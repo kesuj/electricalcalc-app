@@ -65,7 +65,17 @@ def require_positive(name: str, value: float | None, allow_zero: bool = False) -
 
 
 def require_range(name: str, value: float | None, lo: float, hi: float) -> float:
-    v = require_positive(name, value, allow_zero=lo <= 0)
+    if lo < 0:
+        if value is None:
+            raise ValidationError(f"{name} is required.")
+        try:
+            v = float(value)
+        except (TypeError, ValueError):
+            raise ValidationError(f"{name} must be a number.") from None
+        if math.isnan(v) or math.isinf(v):
+            raise ValidationError(f"{name} must be a finite number.")
+    else:
+        v = require_positive(name, value, allow_zero=lo <= 0)
     if not lo <= v <= hi:
         raise ValidationError(f"{name} must be between {lo} and {hi} (got {v}).")
     return v

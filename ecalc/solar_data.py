@@ -47,8 +47,10 @@ def parse_pvgis(data: dict, lat: float, lon: float) -> SolarResource:
         source=(f"PVGIS v5.3 ({meteo.get('radiation_db')}, {meteo.get('year_min')}-{meteo.get('year_max')}) at "
                 f"{lat:.4f}, {lon:.4f}; tilt {mounting['slope']['value']}°, azimuth {mounting['azimuth']['value']}° "
                 f"(0 = south); {loss}% system loss"),
+        monthly_irr_kwh_m2_day=[float(m["H(i)_d"]) for m in data["outputs"]["monthly"]["fixed"] if "H(i)_d" in m],
         details={"E_y": totals["E_y"], "H_i_y": totals.get("H(i)_y"), "l_total_pct": totals.get("l_total"),
-                 "SD_y": totals.get("SD_y")},
+                 "SD_y": totals.get("SD_y"), "l_aoi_pct": totals.get("l_aoi"), "l_spec_pct": totals.get("l_spec"),
+                 "l_tg_pct": totals.get("l_tg"), "system_loss_pct": loss},
     )
 
 
