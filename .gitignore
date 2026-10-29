@@ -1,0 +1,10 @@
+# secrets and local data - never commit
+.env
+data/
+*.db
+business/private/
+# python / tooling
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

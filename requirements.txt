@@ -1,0 +1,11 @@
+anthropic==2.3.0
+fpdf2==2.8.9
+pydantic==2.14.1
+pypdf==6.21.4
+pytest==9.2.0
+python-dotenv==1.2.4
+requests==2.34.2
+streamlit==1.66.1
+# dev-only (screenshots, PDF preview)
+# playwright
+# pypdfium2
