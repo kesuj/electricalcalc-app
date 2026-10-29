@@ -33,7 +33,7 @@ class SolarResource:
         pr = 1 - losses / 100
         return cls(annual_kwh_per_kwp=psh * 365 * pr,
                    source=f"User-entered average of {psh:g} peak sun hours/day (kWh/m²/day on the array plane) "
-                          f"with {losses:g}% system losses",
+                          f"with {losses:g}% total losses (performance ratio {pr:.2f}; must include temperature and reflection losses)",
                    losses_included=True,
                    details={"psh": psh, "performance_ratio": pr})
 

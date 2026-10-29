@@ -85,3 +85,14 @@ def test_design_page_full_run_with_user_loads(temp_data):
         assert k in labels, labels
     projects = Store(temp_data / "ecalc.db").list_projects()
     assert projects[0]["name"] == "Test clinic" and projects[0]["n_calcs"] == 6
+
+
+def test_loss_default_depends_on_solar_data_mode():
+    """PVGIS adds temperature/reflection losses itself (14% system loss); peak-sun-hours mode needs ~23% total."""
+    script = (f"import sys\nsys.path.insert(0, {str(ROOT)!r})\n"
+              "import streamlit as st\nst.cache_resource.clear()\nfrom ui.design import design\ndesign()\n")
+    at = AppTest.from_string(script, default_timeout=60)
+    at.run()
+    assert next(n for n in at.number_input if n.label.startswith("System losses")).value == 14.0
+    next(r for r in at.radio if r.label == "Solar data").set_value("I know the peak sun hours").run()
+    assert next(n for n in at.number_input if n.label.startswith("Total losses")).value == 23.0

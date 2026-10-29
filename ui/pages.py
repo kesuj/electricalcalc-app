@@ -63,8 +63,14 @@ def solar():
     store = get_store()
     st.subheader("1. Location and solar resource")
     src = st.radio("Solar resource source", ["PVGIS (online, free)", "Enter peak sun hours manually"], horizontal=True)
-    loss = st.number_input("System losses (%)", 0.0, 50.0, 14.0, 1.0,
-                           help="Wiring, inverter, soiling, mismatch, etc. PVGIS's own default is 14%.")
+    pvgis_mode = src.startswith("PVGIS")
+    loss = st.number_input(
+        "System losses (%)" if pvgis_mode else "Total losses (%) - includes temperature",
+        0.0, 50.0, 14.0 if pvgis_mode else 23.0, 1.0,
+        help=("Cables, inverter, dust, mismatch, ageing. PVGIS adds temperature and reflection losses itself, "
+              "so 14% (PVGIS default) is typical." if pvgis_mode else
+              "With peak sun hours nothing else is deducted, so include temperature (~8%) and reflection (~3%) "
+              "on top of cables/inverter/dust (~14%): about 23% total, i.e. performance ratio ~0.77."))
     if src.startswith("PVGIS"):
         preset = st.selectbox("Location", ["Custom coordinates"] + list(PRESET_LOCATIONS), index=1)
         lat0, lon0 = PRESET_LOCATIONS.get(preset, (27.7172, 85.3240))

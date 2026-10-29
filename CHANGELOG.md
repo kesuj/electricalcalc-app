@@ -11,6 +11,10 @@
 - Demonstration project (clearly labelled), sample report, screenshots.
 - 87 automated tests.
 
+## 0.2.1 - 2026-10-29
+### Fixed
+- Peak-sun-hours mode defaulted to 14% losses (the PVGIS *system*-loss default), which ignored temperature and reflection losses and overestimated generation by about 10%. It now asks for *total* losses, defaulting to 23% (PR ≈ 0.77), with explanatory help text.
+
 ## 0.2.0 - 2026-10-29
 ### Added
 - **New project design** start page: one form → load schedule, PV sizing, inverter AC current, AC cable, battery DC current and DC cable → full PDF/Markdown report; project auto-saved.

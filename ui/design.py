@@ -44,7 +44,14 @@ def design():
     # ---- 2. site and solar data ----------------------------------------------------------
     st.subheader("2. Site and solar data")
     src = st.radio("Solar data", ["PVGIS for my location (online, free)", "I know the peak sun hours"], horizontal=True)
-    loss = st.number_input("System losses (%)", 0.0, 50.0, 14.0, 1.0)
+    pvgis_mode = src.startswith("PVGIS")
+    loss = st.number_input(
+        "System losses (%)" if pvgis_mode else "Total losses (%) - includes temperature",
+        0.0, 50.0, 14.0 if pvgis_mode else 23.0, 1.0,
+        help=("Cables, inverter, dust, mismatch, ageing. PVGIS adds temperature and reflection losses itself, "
+              "so 14% (PVGIS default) is typical." if pvgis_mode else
+              "With peak sun hours nothing else is deducted, so include temperature (~8%) and reflection (~3%) "
+              "on top of cables/inverter/dust (~14%): about 23% total, i.e. performance ratio ~0.77."))
     resource: SolarResource | None = None
     if src.startswith("PVGIS"):
         a, b, c, d, e = st.columns([2, 1, 1, 1, 1])

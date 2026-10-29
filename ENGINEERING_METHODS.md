@@ -17,6 +17,7 @@ Limitations: no harmonics, no unbalance, no tariff slabs or demand charges. PF c
 
 ## B. Solar PV (`ecalc/calc/solar.py`, `ecalc/solar_data.py`)
 - **Resource:** either (1) PVGIS v5.3 `PVcalc` for 1 kWp at the user's latitude, longitude, tilt and azimuth, with the user's system-loss percentage, returning annual and monthly kWh/kWp with losses already applied; or (2) user-entered peak sun hours, with Y = PSH × 365 × (1 − losses). The source string is printed in every result. No solar data is invented: if PVGIS is unreachable, the user must enter PSH from a reliable dataset.
+- **Losses:** with PVGIS the entered loss is the *system* loss only (PVGIS default 14%); PVGIS separately applies reflection, spectral and temperature losses (Kathmandu: −2.6%, −0.4%, −7.9%; total −23.2%, PR = 0.768). With peak sun hours the entered value is the *total* loss, so the app defaults to 23% (PR ≈ 0.77) instead of 14%, which would overestimate generation by about 10%.
 - **Sizing:** kWp = annual demand × target% / Y; panels = ceil(kWp × 1000 / Wp); area check against the user's net module area.
 - **Inverter:** AC kW = kWp / DC:AC ratio (a user design choice, default 1.2). For hybrid systems it is raised to the peak simultaneous load if that is entered. Surge is not checked (warning given).
 - **Battery:** usable = backup kWh/day × autonomy days; nominal = usable / DoD / η(battery→AC); Ah = nominal × 1000 / V_bank. Usable and nominal are always shown separately.
