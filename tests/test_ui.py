@@ -10,7 +10,7 @@ from ecalc import config
 from ecalc.storage import Store
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["home", "solar", "electrical", "cable", "report_page", "assistant", "docs", "settings", "usage", "help_page"]
+PAGES = ["solar", "electrical", "cable", "report_page", "assistant", "docs", "settings", "usage", "help_page"]
 
 
 def _app(page: str) -> AppTest:
@@ -35,7 +35,7 @@ def test_page_renders(page):
 
 
 def test_demo_project_flow(temp_data):
-    at = _app("home")
+    at = _app("report_page")
     at.run()
     next(b for b in at.button if "demonstration" in b.label).click().run()
     assert not at.exception, [e.value for e in at.exception]
@@ -85,6 +85,10 @@ def test_design_page_full_run_with_user_loads(temp_data):
         assert k in labels, labels
     projects = Store(temp_data / "ecalc.db").list_projects()
     assert projects[0]["name"] == "Test clinic" and projects[0]["n_calcs"] == 6
+    # pressing Calculate again for the same project updates it instead of creating a duplicate
+    next(b for b in at.button if b.label == "Calculate everything").click().run()
+    projects = Store(temp_data / "ecalc.db").list_projects()
+    assert len(projects) == 1 and projects[0]["n_calcs"] == 6
 
 
 def test_loss_default_depends_on_solar_data_mode():

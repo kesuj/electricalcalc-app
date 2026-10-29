@@ -56,6 +56,11 @@ class Store:
         self.conn.commit()
         return cur.lastrowid
 
+    def update_project(self, pid: int, client: str = "", location: str = "", notes: str = "") -> None:
+        self.conn.execute("UPDATE projects SET client = ?, location = ?, notes = ?, updated = ? WHERE id = ?",
+                          (client, location, notes, _now(), pid))
+        self.conn.commit()
+
     def list_projects(self) -> list[dict]:
         rows = self.conn.execute(
             "SELECT p.*, COUNT(c.id) AS n_calcs FROM projects p LEFT JOIN calculations c ON c.project_id = p.id "

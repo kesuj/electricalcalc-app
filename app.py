@@ -10,11 +10,10 @@ st.set_page_config(page_title=config.APP_NAME, page_icon="⚡", layout="wide")
 
 nav = st.navigation({
     config.APP_NAME: [st.Page(design, title="New project design", icon="📐", default=True),
-                     st.Page(pages.home, title="Home & projects", icon="🏠", url_path="home")],
+                     st.Page(pages.report_page, title="My projects & reports", icon="📁", url_path="reports")],
     "Calculations": [st.Page(pages.solar, title="Solar PV sizing", icon="☀️", url_path="solar"),
                      st.Page(pages.electrical, title="Electrical tools", icon="🔌", url_path="electrical"),
                      st.Page(pages.cable, title="Cable voltage drop", icon="🧵", url_path="cable")],
-    "Deliverables": [st.Page(pages.report_page, title="Reports & history", icon="📄", url_path="reports")],
     "AI": [st.Page(pages.assistant, title="AI assistant", icon="🤖", url_path="assistant"),
            st.Page(pages.docs, title="Documents", icon="📚", url_path="documents")],
     "System": [st.Page(pages.settings, title="Settings & providers", icon="⚙️", url_path="settings"),

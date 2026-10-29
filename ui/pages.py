@@ -16,46 +16,6 @@ from ui.common import get_store, page_header, render_result, save_and_export, sh
 CURRENCIES = ["NPR", "USD", "AUD", "GBP", "INR", "EUR"]
 
 
-# ---- Home ---------------------------------------------------------------------------------
-def home():
-    store = get_store()
-    page_header(f"⚡ {config.APP_NAME}", config.APP_TAGLINE)
-    st.markdown("Preliminary **solar PV** and **electrical** calculations with transparent methods, "
-                "draft engineering reports, and an optional AI assistant that explains results - "
-                "it never invents the numbers.")
-    projects = store.list_projects()
-    calcs = store.list_calculations()
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Projects", len(projects))
-    c2.metric("Saved calculations", len(calcs))
-    c3.metric("AI spend this month", f"${store.month_spend_usd():.4f}")
-
-    st.subheader("Projects")
-    with st.form("new_project", clear_on_submit=True):
-        a, b, c = st.columns(3)
-        name = a.text_input("Project name *")
-        client = b.text_input("Client")
-        loc = c.text_input("Location")
-        notes = st.text_area("Scope / notes", height=70)
-        if st.form_submit_button("Create project", type="primary"):
-            try:
-                store.create_project(name, client, loc, notes)
-                st.success(f"Project '{name}' created.")
-                st.rerun()
-            except ValueError as e:
-                st.error(str(e))
-    if st.button("Load demonstration project (clearly labelled sample data)"):
-        pid = load_demo_project(store)
-        st.success(f"Demo project #{pid} created. Open Reports & history to export its sample report.")
-        st.rerun()
-    if projects:
-        st.dataframe([{"ID": p["id"], "Project": p["name"] + (" [DEMO]" if p["is_demo"] else ""),
-                       "Client": p["client"], "Location": p["location"], "Calculations": p["n_calcs"],
-                       "Updated (UTC)": p["updated"]} for p in projects], hide_index=True, use_container_width=True)
-    else:
-        st.info("No projects yet - create one above or load the demonstration project.")
-
-
 # ---- Solar ----------------------------------------------------------------------------------
 def solar():
     page_header("☀️ Solar PV preliminary sizing",
@@ -261,14 +221,36 @@ def cable():
     save_and_export(r, "cable", "cab")
 
 
-# ---- Reports & history -------------------------------------------------------------------
+# ---- My projects & reports ---------------------------------------------------------------
 def report_page():
-    page_header("📄 Reports & project history", "Combine saved calculations into a draft report (PDF or editable Markdown).")
+    page_header("📁 My projects & reports",
+                "Every saved project. Pick one to download its report, add calculations or delete it.")
     store = get_store()
     projects = store.list_projects()
+    if projects:
+        st.dataframe([{"ID": p["id"], "Project": p["name"] + (" [DEMO]" if p["is_demo"] else ""),
+                       "Client": p["client"], "Location": p["location"], "Calculations": p["n_calcs"],
+                       "Updated (UTC)": p["updated"]} for p in projects], hide_index=True, use_container_width=True)
+    with st.expander("Create an empty project (to save results from the individual calculator pages)"):
+        with st.form("new_project", clear_on_submit=True):
+            a, b, c = st.columns(3)
+            name = a.text_input("Project name *")
+            client = b.text_input("Client")
+            loc = c.text_input("Location")
+            notes = st.text_area("Scope / notes", height=70)
+            if st.form_submit_button("Create project", type="primary"):
+                try:
+                    store.create_project(name, client, loc, notes)
+                    st.rerun()
+                except ValueError as e:
+                    st.error(str(e))
+    if st.button("Load demonstration project (clearly labelled sample data)"):
+        load_demo_project(store)
+        st.rerun()
     if not projects:
-        st.info("No projects yet. Create one on the Home page.")
+        st.info("No projects yet. Use **New project design** to enter your first project.")
         return
+    st.subheader("Project report")
     labels = {p["id"]: p["name"] + (" [DEMO]" if p["is_demo"] else "") for p in projects}
     pid = st.selectbox("Project", list(labels), format_func=labels.get)
     proj = store.get_project(pid)
@@ -498,7 +480,7 @@ def help_page():
 - It does not perform load-flow, short-circuit or protection-coordination studies.
 - The AI never computes engineering values; if it states a number not in the calculation, treat it as an error.
 
-**Typical workflow:** Home → create project → run calculations → save → Reports → download draft → engineer review.
+**Typical workflow:** New project design → enter your data → Calculate everything → download the full report → engineer review. Saved projects are under My projects & reports.
 
 See `README.md` and `ENGINEERING_METHODS.md` in the project folder for full details.
 """)

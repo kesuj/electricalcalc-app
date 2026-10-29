@@ -174,7 +174,14 @@ def design():
         except (ValidationError, PVGISError) as e:
             st.error(f"Please check your inputs: {e}")
             return
-        pid = store.create_project(name, client, location_label, notes)
+        prev = st.session_state.get("design_out")
+        if prev and prev["name"] == name and store.get_project(prev["pid"]):
+            pid = prev["pid"]  # recalculating the same project: replace its results instead of duplicating it
+            for c in store.list_calculations(pid):
+                store.delete_calculation(c["id"])
+            store.update_project(pid, client, location_label, notes)
+        else:
+            pid = store.create_project(name, client, location_label, notes)
         for r in results:
             store.save_calculation(pid, "design", r.name, r.to_dict())
         st.session_state["design_out"] = {"pid": pid, "name": name, "client": client, "location": location_label,
@@ -186,7 +193,7 @@ def design():
     results = out["results"]
     st.divider()
     st.header(f"Results - {out['name']}")
-    st.caption(f"Saved as project #{out['pid']} (see Reports & history). Preliminary - for review by a qualified engineer.")
+    st.caption(f"Saved as project #{out['pid']} (see My projects & reports). Preliminary - for review by a qualified engineer.")
     items = list(summary(results).items())
     for i in range(0, len(items), 4):
         cols = st.columns(4)

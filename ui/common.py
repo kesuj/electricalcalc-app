@@ -75,14 +75,14 @@ def save_and_export(r: CalcResult, kind: str, key: str) -> None:
     with c1:
         projects = store.list_projects()
         if not projects:
-            st.info("Create a project on the Home page to save calculations.")
+            st.info("Create a project under My projects & reports (or use New project design) to save calculations.")
         else:
             labels = {p["id"]: f"{p['name']}" + (" (demo)" if p["is_demo"] else "") for p in projects}
             pid = st.selectbox("Save to project", list(labels), format_func=labels.get, key=f"{key}_proj")
             title = st.text_input("Calculation title", value=r.name, key=f"{key}_title")
             if st.button("Save calculation", key=f"{key}_save", type="primary"):
                 store.save_calculation(pid, kind, title, r.to_dict())
-                st.success("Saved. Build a full report on the Reports page.")
+                st.success("Saved. Download the full report under My projects & reports.")
     with c2:
         meta = reports.ReportMeta(project_name=r.name)
         st.download_button("Download quick PDF (draft)", data=reports.build_pdf(meta, [r.to_dict()]),
