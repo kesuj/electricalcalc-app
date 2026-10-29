@@ -48,10 +48,19 @@ def test_demo_project_flow(temp_data):
 
 
 def test_cable_page_shows_hand_calc_value():
+    """User types: 1-phase 230 V, 20 A, 30 m, copper 4 mm2 at 70 C, PF 1.0 -> hand calc 2.878 %."""
     at = _app("cable")
     at.run()
-    # defaults: 1-phase 230 V, 20 A, 30 m, 4 mm2 Cu at 70 C; with PF = 1.0 the hand calc gives 2.878 %
-    next(n for n in at.number_input if n.label == "Power factor").set_value(1.0).run()
+    assert any("Still empty" in i.value for i in at.info)      # nothing pre-filled, no result yet
+    _by_label(at.selectbox, "System *").set_value("single_phase")
+    _by_label(at.number_input, "Nominal voltage (V) *").set_value(230.0)
+    _by_label(at.number_input, "Design current (A) *").set_value(20.0)
+    _by_label(at.number_input, "One-way route length (m) *").set_value(30.0)
+    _by_label(at.selectbox, "Conductor *").set_value("copper").run()
+    _by_label(at.number_input, "Conductor temperature (°C) *").set_value(70.0)
+    _by_label(at.number_input, "Power factor *").set_value(1.0)
+    _by_label(at.selectbox, "Conductor size (mm²) *").set_value(4).run()
+    assert not at.exception, [e.value for e in at.exception]
     assert any("2.878" in m.value for m in at.metric), [m.value for m in at.metric]
 
 
@@ -132,9 +141,35 @@ def test_loss_default_depends_on_solar_data_mode():
 
 
 def test_pf_page_meter_mode_shows_hand_calc():
-    """Default meter mode: 20000 kWh / 15000 kVArh -> PF 0.8; 100 kW to 0.95 -> 42.13 kvar."""
+    """User types 100 kW, 20000 kWh, 15000 kVArh -> PF 0.8; target 0.95 -> 42.13 kvar."""
     at = _app("pf_page")
     at.run()
-    assert not at.exception
+    assert not at.exception and any("Still empty" in i.value for i in at.info)
+    _by_label(at.number_input, "Maximum demand (kW) *").set_value(100.0)
+    _by_label(at.number_input, "Active energy in the period (kWh) *").set_value(20000.0)
+    _by_label(at.number_input, "Reactive energy in the period (kVArh) *").set_value(15000.0)
+    _by_label(at.number_input, "Target PF *").set_value(0.95).run()
+    assert not at.exception, [e.value for e in at.exception]
     assert any("0.800" in c.value for c in at.caption)
     assert any("42.13" in m.value for m in at.metric), [m.value for m in at.metric]
+
+
+def test_solar_page_empty_then_hand_calc():
+    """Peak sun hours 5, 20 % losses, 10 kWh/day, 550 Wp -> Y 1460, 2.5 kWp needed, 5 panels (hand calc)."""
+    at = _app("solar")
+    at.run()
+    _by_label(at.button, "Calculate").click().run()
+    assert "Please fill in" in at.error[0].value
+    _by_label(at.radio, "Sunshine data *").set_value("Enter peak sun hours").run()
+    _by_label(at.number_input, "Peak sun hours (kWh/m²/day) *").set_value(5.0)
+    _by_label(at.number_input, "Total losses (%) - includes temperature *").set_value(20.0)
+    _by_label(at.number_input, "Consumption (kWh/day) *").set_value(10.0)
+    _by_label(at.radio, "System type *").set_value("Grid-tied")
+    _by_label(at.number_input, "Cover % of consumption *").set_value(100.0)
+    _by_label(at.number_input, "Panel rating (Wp) *").set_value(550.0)
+    _by_label(at.number_input, "Panel area (m²) *").set_value(2.6)
+    _by_label(at.number_input, "DC/AC ratio *").set_value(1.2)
+    _by_label(at.button, "Calculate").click().run()
+    assert not at.exception and not at.error, [e.value for e in at.error]
+    vals = [m.value for m in at.metric]
+    assert "5 panels" in vals and any(v.startswith("2.75") for v in vals), vals

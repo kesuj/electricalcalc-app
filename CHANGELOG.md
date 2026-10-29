@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1 - 2026-10-29
+### Changed
+- **Solar PV sizing**, **Cable voltage drop** and **Power-factor correction** pages: every box now starts empty with short grey hint text saying where to find or measure the value (full explanation on each box's ? icon); results appear only when the required boxes are filled, and the still-empty ones are listed.
+- In-box hints shortened so they fit narrow boxes; detailed guidance kept in tooltips.
+
 ## 0.3.0 - 2026-10-29
 ### Changed
 - Start page rebuilt as **Plan a solar system** for non-engineers: five plain-language steps; every question box starts empty with grey hint text saying how to find or measure the value; required answers are checked and missing ones listed.

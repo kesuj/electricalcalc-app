@@ -12,133 +12,148 @@ from ecalc.calc.solar import SolarInputs, SolarResource, size_pv_system
 from ecalc.demo import load_demo_project
 from ecalc.solar_data import PRESET_LOCATIONS, PVGISError, fetch_pvgis
 from ui.common import get_store, page_header, render_result, save_and_export, show_error
+from ui.hints import missing, num
 
 CURRENCIES = ["NPR", "USD", "AUD", "GBP", "INR", "EUR"]
 
 
 # ---- Solar ----------------------------------------------------------------------------------
 def solar():
-    page_header("☀️ Solar PV preliminary sizing",
-                "Grid-tied or hybrid (battery) systems. Solar data from PVGIS or your own peak-sun-hours value.")
+    page_header("☀️ Solar PV sizing",
+                "Quick solar sizing for engineers. Fill in the boxes - the grey text says where to find each value.")
     store = get_store()
-    st.subheader("1. Location and solar resource")
-    src = st.radio("Solar resource source", ["PVGIS (online, free)", "Enter peak sun hours manually"], horizontal=True)
+    st.subheader("1. Location and sunshine data")
+    src = st.radio("Sunshine data *", ["PVGIS (online, free)", "Enter peak sun hours"], horizontal=True)
     pvgis_mode = src.startswith("PVGIS")
-    loss = st.number_input(
-        "System losses (%)" if pvgis_mode else "Total losses (%) - includes temperature",
-        0.0, 50.0, 14.0 if pvgis_mode else 23.0, 1.0,
-        help=("Cables, inverter, dust, mismatch, ageing. PVGIS adds temperature and reflection losses itself, "
-              "so 14% (PVGIS default) is typical." if pvgis_mode else
-              "With peak sun hours nothing else is deducted, so include temperature (~8%) and reflection (~3%) "
-              "on top of cables/inverter/dust (~14%): about 23% total, i.e. performance ratio ~0.77."))
-    if src.startswith("PVGIS"):
-        preset = st.selectbox("Location", ["Custom coordinates"] + list(PRESET_LOCATIONS), index=1)
-        lat0, lon0 = PRESET_LOCATIONS.get(preset, (27.7172, 85.3240))
-        a, b, c, d = st.columns(4)
-        lat = a.number_input("Latitude", -90.0, 90.0, lat0, format="%.4f")
-        lon = b.number_input("Longitude", -180.0, 180.0, lon0, format="%.4f")
-        tilt = c.number_input("Tilt (°)", 0.0, 90.0, float(round(abs(lat0))), 1.0)
-        aspect = d.number_input("Azimuth (° from south, PVGIS)", -180.0, 180.0, 0.0 if lat >= 0 else 180.0, 5.0,
-                                help="PVGIS convention: 0 = south-facing, 90 = west, -90 = east, 180 = north.")
-        location_label = preset if preset != "Custom coordinates" else f"{lat:.4f}, {lon:.4f}"
-        if st.button("Get solar data from PVGIS"):
-            try:
-                with st.spinner("Querying PVGIS..."):
-                    st.session_state["solar_res"] = fetch_pvgis(lat, lon, tilt, aspect, loss, cache=store)
-                    st.session_state["solar_loc"] = location_label
-            except (PVGISError, ValidationError) as e:
-                st.error(str(e))
-        res: SolarResource | None = st.session_state.get("solar_res")
-        if res:
-            st.success(f"Specific yield {res.annual_kwh_per_kwp:,.1f} kWh/kWp/yr - {res.source}")
+    lat = lon = tilt = aspect = psh = None
+    if pvgis_mode:
+        a, b, c = st.columns([2, 1, 1])
+        city = a.selectbox("Nearest city *", list(PRESET_LOCATIONS), index=None, placeholder="Choose, or type coordinates →")
+        lat_in = num(b, "lat", "Latitude", -90.0, 90.0, wkey="s_lat")
+        lon_in = num(c, "lon", "Longitude", -180.0, 180.0, wkey="s_lon")
+        if lat_in is not None and lon_in is not None:
+            lat, lon, location_label = lat_in, lon_in, f"{lat_in:.4f}, {lon_in:.4f}"
+        elif city:
+            (lat, lon), location_label = PRESET_LOCATIONS[city], city
+        else:
+            location_label = ""
+        a, b, c = st.columns(3)
+        tilt = num(a, "tilt", "Tilt (°) *", 0.0, 90.0, wkey="s_tilt")
+        aspect = num(b, "azimuth", "Azimuth (°, 0 = south) *", -180.0, 180.0, wkey="s_az")
+        loss = num(c, "loss_pvgis", "System losses (%) *", 0.0, 50.0, wkey="s_loss_p")
     else:
-        psh = st.number_input("Average peak sun hours on the array plane (kWh/m²/day)", 0.5, 9.0, 5.0, 0.1,
-                              help="Use a value from a reliable dataset for your site; do not guess.")
-        location_label = st.text_input("Location label", "")
-        try:
-            res = SolarResource.from_peak_sun_hours(psh, loss)
-        except ValidationError as e:
-            res = None; show_error(e)
+        a, b, c = st.columns(3)
+        psh = num(a, "psh", "Peak sun hours (kWh/m²/day) *", 0.5, 9.0, wkey="s_psh")
+        loss = num(b, "loss_psh", "Total losses (%) - includes temperature *", 0.0, 50.0, wkey="s_loss_t")
+        location_label = c.text_input("Location name", placeholder="e.g. Pokhara-8, Kaski")
 
-    st.subheader("2. Consumption, equipment and economics")
-    a, b, c = st.columns(3)
-    basis = a.radio("Consumption basis", ["Daily (kWh/day)", "Monthly (kWh/month)"])
-    cons = a.number_input("Consumption", 0.1, 1e6, 12.0 if basis.startswith("Daily") else 360.0)
-    daily = cons if basis.startswith("Daily") else cons * 12 / 365
-    system = b.radio("System type", ["Grid-tied", "Hybrid with battery"])
-    offset = b.number_input("Target share of consumption (%)", 1.0, 200.0, 100.0, 5.0)
-    area = b.number_input("Available module area (m², 0 = not limited)", 0.0, 1e5, 0.0)
-    wp = c.number_input("Panel rating (Wp)", 50.0, 1000.0, 550.0, 5.0, help="From the chosen module datasheet.")
-    parea = c.number_input("Panel area (m²)", 0.3, 4.0, 2.58, 0.01, help="Length × width from the datasheet.")
-    ratio = c.number_input("DC/AC ratio", 0.8, 1.6, 1.2, 0.05)
+    st.subheader("2. Consumption and system")
+    a, b = st.columns(2)
+    basis = a.radio("Consumption entered as *", ["Per day (kWh/day)", "Per month (kWh = bill units)"], horizontal=True)
+    cons = (num(b, "daily_kwh", "Consumption (kWh/day) *", 0.01, 1e6, wkey="s_cd") if basis.startswith("Per day")
+            else num(b, "monthly_kwh", "Consumption (kWh/month) *", 0.1, 1e7, wkey="s_cm"))
+    system = st.radio("System type *", ["Grid-tied", "Hybrid with battery"], index=None, horizontal=True)
     a, b, c, d = st.columns(4)
-    cur = a.selectbox("Currency", CURRENCIES)
-    tariff = b.number_input(f"Tariff ({cur}/kWh, 0 = skip)", 0.0, 1e4, 0.0)
-    export = c.number_input(f"Export rate ({cur}/kWh)", 0.0, 1e4, 0.0)
-    cost_kwp = d.number_input(f"Installed cost ({cur}/kWp, 0 = skip)", 0.0, 1e8, 0.0)
-    bat = {}
-    if system.startswith("Hybrid"):
+    offset = num(a, "offset", "Cover % of consumption *", 1.0, 200.0, wkey="s_off")
+    wp = num(b, "panel_wp", "Panel rating (Wp) *", 50.0, 1000.0, wkey="s_wp")
+    parea = num(c, "panel_area", "Panel area (m²) *", 0.3, 4.0, wkey="s_pa")
+    ratio = num(d, "dc_ac", "DC/AC ratio *", 0.8, 1.6, wkey="s_ratio")
+    area = num(st, "roof_area", "Available module area (m²) - optional", 0.0, 1e6, wkey="s_area")
+    hybrid = system == "Hybrid with battery"
+    bat: dict = {}
+    if hybrid:
         st.markdown("**Battery and backup**")
         a, b, c, d, e = st.columns(5)
-        bat = dict(backup_kwh_per_day=a.number_input("Backup energy (kWh/day)", 0.1, 1e4, 5.0),
-                   autonomy_days=b.number_input("Autonomy (days)", 0.1, 7.0, 1.0, 0.5),
-                   battery_dod_pct=c.number_input("Depth of discharge (%)", 10.0, 100.0, 80.0),
-                   battery_voltage_v=d.number_input("Bank voltage (V)", 12.0, 1000.0, 48.0),
-                   peak_load_kw=e.number_input("Peak load (kW, 0 = unknown)", 0.0, 1e4, 0.0) or None)
-        bcost = st.number_input(f"Battery cost ({cur}/kWh nominal, 0 = skip)", 0.0, 1e7, 0.0)
-        bat["battery_cost_per_kwh"] = bcost or None
+        bat = dict(backup_kwh_per_day=num(a, "backup_eng", "Backup energy (kWh/day) *", 0.01, 1e5, wkey="s_bk"),
+                   autonomy_days=num(b, "autonomy", "Autonomy (days) *", 0.1, 7.0, wkey="s_aut"),
+                   battery_dod_pct=num(c, "dod", "Depth of discharge (%) *", 10.0, 100.0, wkey="s_dod"),
+                   battery_voltage_v=num(d, "vbat", "Bank voltage (V) *", 12.0, 1000.0, wkey="s_vb"),
+                   peak_load_kw=num(e, "peak_kw", "Peak load (kW)", 0.0, 1e5, wkey="s_pk"))
+    with st.expander("Costs and tariff (optional - for savings and payback)"):
+        a, b, c, d, e = st.columns(5)
+        cur = a.selectbox("Currency", CURRENCIES)
+        tariff = num(b, "tariff", "Tariff per unit", 0.0, 1e4, wkey="s_tar")
+        export = num(c, "export", "Export rate per unit", 0.0, 1e4, wkey="s_exp")
+        cost_kwp = num(d, "cost_kwp", "Installed cost per kWp", 0.0, 1e9, wkey="s_ck")
+        bcost = num(e, "bat_cost", "Battery cost per kWh", 0.0, 1e8, disabled=not hybrid, wkey="s_bc")
 
-    if st.button("Calculate", type="primary", disabled=res is None):
-        try:
-            r = size_pv_system(SolarInputs(
-                daily_consumption_kwh=daily, panel_wp=wp, panel_area_m2=parea, resource=res,
-                system_type="grid_tied" if system == "Grid-tied" else "hybrid_battery", target_offset_pct=offset,
-                available_area_m2=area or None, dc_ac_ratio=ratio, tariff_per_kwh=tariff or None,
-                export_rate_per_kwh=export, currency=cur, cost_per_kwp=cost_kwp or None,
-                location_label=st.session_state.get("solar_loc", location_label) if src.startswith("PVGIS") else location_label,
-                **bat))
-            st.session_state["solar_result"] = r
-        except ValidationError as e:
-            show_error(e)
-    if res is None and src.startswith("PVGIS"):
-        st.caption("Fetch PVGIS data first (or switch to manual peak sun hours).")
+    if st.button("Calculate", type="primary"):
+        required = {"Losses": loss, "Consumption": cons, "System type": system, "Cover %": offset,
+                    "Panel rating": wp, "Panel area": parea, "DC/AC ratio": ratio}
+        if pvgis_mode:
+            required.update({"Nearest city or latitude/longitude": lat, "Tilt": tilt, "Azimuth": aspect})
+        else:
+            required["Peak sun hours"] = psh
+        if hybrid:
+            required.update({"Backup energy": bat["backup_kwh_per_day"], "Autonomy": bat["autonomy_days"],
+                             "Depth of discharge": bat["battery_dod_pct"], "Bank voltage": bat["battery_voltage_v"]})
+        gaps = missing(required)
+        if gaps:
+            st.error("Please fill in: " + ", ".join(gaps) + ".")
+        else:
+            try:
+                res = (fetch_pvgis(lat, lon, tilt, aspect, loss, cache=store) if pvgis_mode
+                       else SolarResource.from_peak_sun_hours(psh, loss))
+                daily = cons if basis.startswith("Per day") else cons * 12 / 365
+                if bat:
+                    bat["peak_load_kw"] = bat["peak_load_kw"] or None
+                    bat["battery_cost_per_kwh"] = bcost or None
+                st.session_state["solar_result"] = size_pv_system(SolarInputs(
+                    daily_consumption_kwh=daily, panel_wp=wp, panel_area_m2=parea, resource=res,
+                    system_type="hybrid_battery" if hybrid else "grid_tied", target_offset_pct=offset,
+                    available_area_m2=area or None, dc_ac_ratio=ratio, tariff_per_kwh=tariff,
+                    export_rate_per_kwh=export or 0, currency=cur, cost_per_kwp=cost_kwp or None,
+                    location_label=location_label, **bat))
+            except (PVGISError, ValidationError) as e:
+                show_error(e)
     r = st.session_state.get("solar_result")
     if r:
         st.subheader("3. Results")
-        keys = ["pv_kwp", "panel_count", "annual_generation_kwh", "inverter_ac_kw"]
-        render_result(r, keys)
+        render_result(r, ["pv_kwp", "panel_count", "annual_generation_kwh", "inverter_ac_kw"])
         save_and_export(r, "solar", "solar")
 
 
 # ---- Power-factor correction -------------------------------------------------------------
 def pf_page():
     page_header("⚡ Power-factor correction",
-                "Capacitor bank size to raise power factor - e.g. to avoid utility low-PF penalties.")
-    src = st.radio("Existing power factor", ["From meter / bill readings (kWh and kVArh)", "I know the power factor"],
+                "Capacitor bank size to raise power factor - e.g. to avoid utility low-PF penalties. "
+                "The grey text in each box says where to find the value.")
+    src = st.radio("Existing power factor *", ["From meter / bill readings (kWh and kVArh)", "I know the power factor"],
                    horizontal=True)
+    meter = src.startswith("From")
     a, b, c = st.columns(3)
-    p = a.number_input("Maximum demand (kW)", 0.001, 1e6, 100.0,
-                       help="Sizing basis. Use the bill's maximum demand or a measured peak, not the average.")
-    if src.startswith("From"):
-        kwh = b.number_input("Active energy in the period (kWh)", 0.001, 1e9, 20000.0)
-        kvarh = c.number_input("Reactive energy in the period (kVArh)", 0.0, 1e9, 15000.0)
-        try:
+    p = num(a, "max_demand", "Maximum demand (kW) *", 0.001, 1e6, wkey="pf_p")
+    kwh = kvarh = pf1 = None
+    if meter:
+        kwh = num(b, "kwh", "Active energy in the period (kWh) *", 0.001, 1e9, wkey="pf_kwh")
+        kvarh = num(c, "kvarh", "Reactive energy in the period (kVArh) *", 0.0, 1e9, wkey="pf_kvarh")
+        if kwh is not None and kvarh is not None:
             st.caption(f"Average power factor from these readings: **{fun.pf_from_energy(kwh, kvarh):.3f}**")
-        except ValidationError as e:
-            show_error(e)
     else:
-        pf1 = b.number_input("Existing PF", 0.01, 0.999, 0.70, 0.01)
-    pf2 = st.number_input("Target PF", 0.02, 1.0, 0.95, 0.01,
-                          help="Check the utility's minimum PF requirement for your tariff category.")
+        pf1 = num(b, "pf_existing", "Existing PF *", 0.01, 0.999, 0.01, wkey="pf_1")
+    pf2 = num(st, "pf_target", "Target PF *", 0.02, 1.0, 0.01, wkey="pf_2")
     with st.expander("Capacitance per phase (optional)"):
         a, b, c = st.columns(3)
-        v = a.number_input("Line voltage (V, 0 = skip)", 0.0, 1e6, 400.0)
-        f = b.selectbox("Frequency (Hz)", [50.0, 60.0])
-        conn = c.selectbox("Capacitor connection", ["delta", "star"])
-    if src.startswith("From"):
+        v = num(a, "pf_volts", "Line voltage (V)", 0.0, 1e6, wkey="pf_v")
+        f = b.selectbox("Frequency (Hz)", [50.0, 60.0], help="Nepal, India, UK, Australia: 50 Hz. USA: 60 Hz.")
+        conn = c.selectbox("Capacitor connection", ["delta", "star"],
+                           help="From the capacitor bank datasheet; low-voltage banks are usually delta.")
+    required = {"Maximum demand": p, "Target PF": pf2}
+    required.update({"kWh": kwh, "kVArh": kvarh} if meter else {"Existing PF": pf1})
+    if _need(required):
+        return
+    if meter:
         _run(lambda: fun.pf_correction_from_meter(p, kwh, kvarh, pf2, v or None, f, conn), "pf_correction", "pfc")
     else:
         _run(lambda: fun.pf_correction(p, pf1, pf2, v or None, f, conn), "pf_correction", "pfc")
+
+
+def _need(fields: dict) -> bool:
+    """Show which boxes are still empty; True means results cannot be calculated yet."""
+    gaps = missing(fields)
+    if gaps:
+        st.info("Fill in the boxes marked * to see the result. Still empty: " + ", ".join(gaps) + ".")
+    return bool(gaps)
 
 
 def _run(fn, kind, key):
@@ -153,36 +168,50 @@ def _run(fn, kind, key):
 
 # ---- Cable --------------------------------------------------------------------------------
 def cable():
-    page_header("🧵 Cable voltage drop (preliminary)",
-                "IEC 60228 conductor resistance, temperature corrected. Voltage-drop criterion only.")
+    page_header("🧵 Cable voltage drop",
+                "Checks voltage drop only (IEC 60228 conductor resistance). The grey text in each box says where to "
+                "find the value.")
     st.info("This tool does **not** select a final cable. Ampacity (installation method, ambient temperature, "
             "grouping, insulation), protection and short-circuit withstand must be checked separately "
             "against the applicable wiring rules.", icon="ℹ️")
-    mode = st.radio("Mode", ["Check a chosen size", "Find minimum size for a drop limit"], horizontal=True)
+    mode = st.radio("What do you want? *", ["Check a chosen size", "Find the smallest size that meets a drop limit"],
+                    horizontal=True)
+    check = mode.startswith("Check")
     a, b, c, d = st.columns(4)
-    system = a.selectbox("System", ["single_phase", "three_phase", "dc"],
+    system = a.selectbox("System *", ["single_phase", "three_phase", "dc"], index=None, placeholder="1-phase, 3-phase or DC",
                          format_func=lambda s: {"single_phase": "Single-phase AC", "three_phase": "Three-phase AC",
-                                                "dc": "DC"}[s])
-    v = b.number_input("Nominal voltage (V)", 1.0, 1e5, {"single_phase": 230.0, "three_phase": 400.0, "dc": 48.0}[system],
-                       help="Phase-neutral for single-phase; line-line for three-phase.")
-    i = c.number_input("Design current (A)", 0.01, 1e5, 20.0)
-    length = d.number_input("One-way route length (m)", 0.1, 1e5, 30.0)
+                                                "dc": "DC (battery / solar)"}[s],
+                         help="Single-phase: 2 wires (L+N). Three-phase: 3 or 4 wires. DC: battery or solar circuits.")
+    v = num(b, "nom_v", "Nominal voltage (V) *", 1.0, 1e5, wkey="c_v")
+    i = num(c, "design_i", "Design current (A) *", 0.01, 1e5, wkey="c_i")
+    length = num(d, "cable_len", "One-way route length (m) *", 0.1, 1e5, wkey="c_len")
     a, b, c, d = st.columns(4)
-    mat = a.selectbox("Conductor", ["copper", "aluminium"])
-    temp = b.number_input("Conductor temperature (°C)", -20.0, 250.0, 70.0,
-                          help="70 °C = PVC max operating; 90 °C = XLPE/EPR max. Use the actual insulation rating.")
-    pf = c.number_input("Power factor", 0.01, 1.0, 1.0 if system == "dc" else 0.9, disabled=system == "dc")
-    x = d.number_input("Reactance (mΩ/m, from datasheet; 0 = ignore)", 0.0, 2.0, 0.0, 0.01, disabled=system == "dc")
-    limit = st.number_input("Voltage-drop limit (%)", 0.1, 20.0, 3.0, 0.5,
-                            help="Choose the limit required by your applicable code or specification.")
+    mat = a.selectbox("Conductor *", ["copper", "aluminium"], index=None, placeholder="Printed on the cable sheath",
+                      help="Copper or aluminium - printed on the cable sheath or datasheet.")
+    temp = num(b, "temp", "Conductor temperature (°C) *", -20.0, 250.0, wkey="c_t")
+    pf = num(c, "pf", "Power factor *", 0.01, 1.0, 0.01, disabled=system == "dc", wkey="c_pf")
+    x = num(d, "reactance", "Reactance (mΩ/m)", 0.0, 2.0, 0.01, disabled=system == "dc", wkey="c_x")
+    a, b = st.columns(2)
+    limit = num(a, "vd_limit", "Voltage-drop limit (%)" + (" - optional" if check else " *"), 0.1, 20.0, 0.5, wkey="c_lim")
+    size = None
+    if check:
+        size = b.selectbox("Conductor size (mm²) *", cab.STANDARD_SIZES[mat] if mat else [], index=None,
+                           placeholder="Printed on the cable, e.g. 4" if mat else "Choose the conductor first",
+                           help="Cross-section printed on the cable sheath, e.g. '3C x 4 mm²'.")
+    required = {"System": system, "Nominal voltage": v, "Design current": i, "Route length": length,
+                "Conductor": mat, "Conductor temperature": temp}
+    if system != "dc":
+        required["Power factor"] = pf
+    required.update({"Conductor size": size} if check else {"Voltage-drop limit": limit})
+    if _need(required):
+        return
+    pf = 1.0 if system == "dc" else pf
     try:
-        if mode.startswith("Check"):
-            size = st.selectbox("Conductor size (mm²)", cab.STANDARD_SIZES[mat],
-                                index=cab.STANDARD_SIZES[mat].index(4) if mat == "copper" else 0)
-            r = cab.voltage_drop(system, v, i, length, size, mat, temp, pf, x, limit)
-            keys = ["voltage_drop_v", "voltage_drop_pct", "receiving_voltage_v", "within_limit"]
+        if check:
+            r = cab.voltage_drop(system, v, i, length, size, mat, temp, pf, x or 0.0, limit)
+            keys = ["voltage_drop_v", "voltage_drop_pct", "receiving_voltage_v"] + (["within_limit"] if limit else ["power_loss_w"])
         else:
-            r = cab.minimum_size_for_drop(system, v, i, length, limit, mat, temp, pf, x)
+            r = cab.minimum_size_for_drop(system, v, i, length, limit, mat, temp, pf, x or 0.0)
             keys = ["min_size_mm2", "voltage_drop_pct", "voltage_drop_v", "power_loss_w"]
     except ValidationError as e:
         show_error(e)
