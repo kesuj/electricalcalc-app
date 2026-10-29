@@ -75,7 +75,7 @@ def save_and_export(r: CalcResult, kind: str, key: str) -> None:
     with c1:
         projects = store.list_projects()
         if not projects:
-            st.info("Create a project under My projects & reports (or use New project design) to save calculations.")
+            st.info("Create a project under My projects & reports (or use Plan a solar system) to save calculations.")
         else:
             labels = {p["id"]: f"{p['name']}" + (" (demo)" if p["is_demo"] else "") for p in projects}
             pid = st.selectbox("Save to project", list(labels), format_func=labels.get, key=f"{key}_proj")

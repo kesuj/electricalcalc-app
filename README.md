@@ -7,7 +7,7 @@
 ![Solar sizing](docs/screenshots/2_solar.png)
 
 ## Features
-- **New project design (start page):** enter a project once, with a load list or monthly bill units, and get the load schedule, PV sizing, inverter, battery, AC and DC cable voltage-drop checks, plus the full PDF report, in one click.
+- **Plan a solar system (start page), usable by non-engineers:** five plain questions (city, roof, electricity bill or appliances, power cuts, supply type), empty boxes with hints on how to find each value, an appliance picker with typical wattages, and engineer settings with standard values. One click gives a plain-words summary, all calculations (load schedule, PV, inverter, battery, cable voltage drop) and the full PDF report.
 - **Solar PV sizing (grid-tied / hybrid):**
   - real yield data from [PVGIS](https://re.jrc.ec.europa.eu/pvg_tools/) (EC JRC), or your own peak-sun-hours value
   - panel count, inverter sizing, and battery sizing that keeps **usable vs nominal** capacity separate
@@ -32,7 +32,7 @@ uv pip install --python .venv\Scripts\python.exe -r requirements.txt
 ```
 macOS/Linux: use `.venv/bin/` instead of `.venv\Scripts\`. Without uv: `python -m venv .venv` then `pip install -r requirements.txt`.
 
-Open http://localhost:8501, enter your project on **New project design** and press **Calculate everything**.
+Open http://localhost:8501, answer the questions on **Plan a solar system** and press **Calculate my solar system**.
 
 AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay blocked until you set `ECALC_MONTHLY_BUDGET_USD`.
 
@@ -40,7 +40,7 @@ AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay
 ```powershell
 .venv\Scripts\python -m pytest
 ```
-The 101 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
+The 107 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
 
 ## Documentation
 [ARCHITECTURE](ARCHITECTURE.md) · [ENGINEERING_METHODS](ENGINEERING_METHODS.md) · [SECURITY](SECURITY.md) · [TESTING](TESTING.md) · [CHANGELOG](CHANGELOG.md)

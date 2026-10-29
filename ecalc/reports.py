@@ -139,7 +139,8 @@ class _PDF(FPDF):
                     r.cell(self.t(str(row.get(c, ""))))
 
 
-def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None = None) -> bytes:
+def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None = None,
+              summary: list[str] | None = None) -> bytes:
     """results: list of CalcResult.to_dict() items. ai_commentary is printed in a separately
     labelled section so calculated values are never mixed with AI text."""
     if not results:
@@ -156,6 +157,8 @@ def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None =
     pdf.set_fill_color(255, 244, 229)
     pdf.set_font(pdf.family, "", 8.5)
     pdf.multi_cell(0, 4.6, pdf.t(DISCLAIMER), fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    if summary:
+        pdf.h2("Summary in plain words"); pdf.bullets(summary)
     if meta.notes:
         pdf.h2("Scope and notes"); pdf.para(meta.notes)
     pdf.h2("Contents")
@@ -195,7 +198,8 @@ def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None =
     return bytes(pdf.output())
 
 
-def build_markdown(meta: ReportMeta, results: list[dict], ai_commentary: str | None = None) -> str:
+def build_markdown(meta: ReportMeta, results: list[dict], ai_commentary: str | None = None,
+                   summary: list[str] | None = None) -> str:
     """Editable plain-text version of the same report."""
     lines = [f"# Preliminary Engineering Calculation Report - {meta.project_name}", ""]
     if meta.is_demo:
@@ -204,6 +208,8 @@ def build_markdown(meta: ReportMeta, results: list[dict], ai_commentary: str | N
               f"- Prepared by: {meta.prepared_by or '-'}", f"- Date: {meta.report_date}",
               f"- Software: {config.APP_NAME} v{__version__}", f"- Review status: {meta.review_status}",
               f"- Reviewer: {meta.reviewer or 'Not reviewed'}", "", f"> {DISCLAIMER}", ""]
+    if summary:
+        lines += ["## Summary in plain words", ""] + [f"- {x}" for x in summary] + [""]
     for i, r in enumerate(results, 1):
         lines += [f"## {i}. {r['name']}", "", "### Inputs", "", "| Parameter | Value |", "|---|---|"]
         lines += [f"| {q['label'] or k} | {_fmt(q)} |" for k, q in r["inputs"].items()]

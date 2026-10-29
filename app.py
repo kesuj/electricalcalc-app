@@ -9,7 +9,7 @@ from ui.design import design
 st.set_page_config(page_title=config.APP_NAME, page_icon="⚡", layout="wide")
 
 nav = st.navigation({
-    config.APP_NAME: [st.Page(design, title="New project design", icon="📐", default=True),
+    config.APP_NAME: [st.Page(design, title="Plan a solar system", icon="☀️", default=True),
                      st.Page(pages.report_page, title="My projects & reports", icon="📁", url_path="reports")],
     "Calculations": [st.Page(pages.solar, title="Solar PV sizing", icon="☀️", url_path="solar"),
                      st.Page(pages.cable, title="Cable voltage drop", icon="🧵", url_path="cable")],

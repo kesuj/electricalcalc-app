@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 - 2026-10-29
+### Changed
+- Start page rebuilt as **Plan a solar system** for non-engineers: five plain-language steps; every question box starts empty with grey hint text saying how to find or measure the value; required answers are checked and missing ones listed.
+- Roof answered as flat/sloping + compass direction + steepness (converted to tilt/azimuth); location by nearest city or exact Google Maps coordinates.
+- Appliance picker with typical wattages (marked "typical - check label"); backup sized from "longest power cut (hours)" × appliances needed during cuts.
+- Technical values (panel datasheet, DC/AC ratio, depth of discharge, coincidence factor, voltage-drop limits, losses) moved to **Engineer settings** with standard values, all printed in the report. Default AC voltage-drop limit is 1.5% (grid-tied voltage-rise risk).
+- Cable checks run only when a cable length is entered; skipped checks are stated in the report.
+### Added
+- Plain-words summary at the top of the results and in the PDF/Markdown report.
+
 ## 0.2.4 - 2026-10-29
 ### Changed
 - Removed the six-tab "Electrical tools" page; the app stays focused on solar design. The engine functions remain (tested, used internally).

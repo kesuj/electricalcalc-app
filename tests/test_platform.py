@@ -224,3 +224,13 @@ def test_injection_detection_and_wrapping():
     wrapped = ai.wrap_passages([{"filename": "f.pdf", "page": 1, "text": evil}])
     assert wrapped.count("</document>") == 1  # attacker cannot close the data block
     assert "untrusted" in ai.SYSTEM_PROMPT
+
+
+def test_reports_include_plain_summary(results):
+    meta = reports.ReportMeta("P")
+    md = reports.build_markdown(meta, results, summary=["You need 6 solar panels."])
+    assert "## Summary in plain words" in md and "You need 6 solar panels." in md
+    from pypdf import PdfReader
+    import io
+    pdf = reports.build_pdf(meta, results, summary=["You need 6 solar panels."])
+    assert "Summary in plain words" in PdfReader(io.BytesIO(pdf)).pages[0].extract_text()

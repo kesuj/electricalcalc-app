@@ -3,7 +3,7 @@
 Run: `.venv\Scripts\python -m pytest`
 
 ## Test report: 2026-10-29, v0.1.0 (Windows 11, Python 3.14.7)
-**101 passed, 0 failed** (v0.2.4; adds PF-from-meter-readings tests; adds load-schedule and full-design workflow tests with hand-calculated values, and an end-to-end run of the New project design page).
+**107 passed, 0 failed** (v0.3.0; adds layman-flow, unanswered-question, outage-hours backup, plain-summary and report-summary tests; adds load-schedule and full-design workflow tests with hand-calculated values, and an end-to-end run of the New project design page).
 
 | File | Tests | Covers |
 |---|---|---|

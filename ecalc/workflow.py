@@ -23,7 +23,9 @@ class ProjectDesign:
     coincidence_factor: float = 1.0
     monthly_kwh: float | None = None
     peak_load_kw: float | None = None
-    backup_kwh_per_day: float | None = None
+    backup_kwh_per_day: float | None = None   # engineer input; otherwise derived from outage hours
+    outage_hours: float | None = None         # layman input: hours of power cut per day to cover
+    backup_loads: list[dict] = field(default_factory=list)  # bill mode: appliances needed during power cuts
     # system
     system_type: str = "grid_tied"
     panel_wp: float = 550
@@ -43,10 +45,10 @@ class ProjectDesign:
     # cables
     supply_phases: int = 1
     supply_voltage_v: float = 230
-    ac_cable_length_m: float = 20
-    ac_drop_limit_pct: float = 3
-    dc_cable_length_m: float = 3
-    dc_drop_limit_pct: float = 1
+    ac_cable_length_m: float | None = None   # None = cable check skipped
+    ac_drop_limit_pct: float | None = None
+    dc_cable_length_m: float | None = None
+    dc_drop_limit_pct: float | None = None
     conductor: str = "copper"
     conductor_temp_c: float = 70
 
@@ -85,8 +87,24 @@ def run_full_design(d: ProjectDesign) -> list[CalcResult]:
         raise ValidationError("Daily consumption must be greater than zero.")
 
     hybrid = d.system_type == "hybrid_battery"
+    if hybrid and d.backup_kwh_per_day is None and d.outage_hours:
+        hours = require_range("Power-cut hours per day", d.outage_hours, 0.5, 24)
+        if d.loads:
+            crit_kw = results[0].out("critical_kw")
+        else:
+            if not any(r.get("name") or r.get("power_w") for r in d.backup_loads):
+                raise ValidationError("Choose at least one appliance that must work during power cuts.")
+            bl = load_schedule([dict(r, critical=True, hours_per_day=hours) for r in d.backup_loads])
+            bl.name = "Backup loads (needed during power cuts)"
+            results.append(bl)
+            crit_kw = bl.out("connected_kw")
+            peak_kw = peak_kw or crit_kw
+        if crit_kw <= 0:
+            raise ValidationError("Choose at least one appliance that must work during power cuts.")
+        backup = crit_kw * hours
     if hybrid and not backup:
-        raise ValidationError("For a hybrid system, mark critical loads in the load list or enter the backup energy per day.")
+        raise ValidationError("For a backup (battery) system, choose the appliances needed during power cuts "
+                              "and the hours of power cut per day.")
     pv = size_pv_system(SolarInputs(
         daily_consumption_kwh=daily, panel_wp=d.panel_wp, panel_area_m2=d.panel_area_m2, resource=d.resource,
         system_type=d.system_type, target_offset_pct=d.target_offset_pct, available_area_m2=d.available_area_m2,
@@ -106,18 +124,28 @@ def run_full_design(d: ProjectDesign) -> list[CalcResult]:
     results.append(cur)
 
     system = "three_phase" if d.supply_phases == 3 else "single_phase"
-    ac = cable.minimum_size_for_drop(system, d.supply_voltage_v, cur.out("current_a"), d.ac_cable_length_m,
-                                     d.ac_drop_limit_pct, d.conductor, d.conductor_temp_c, 1.0)
-    ac.name = "Inverter-to-main-board AC cable (voltage-drop sizing)"
-    results.append(ac)
+    if d.ac_cable_length_m:
+        if not d.ac_drop_limit_pct:
+            raise ValidationError("Enter the AC voltage-drop limit (%) for the inverter cable.")
+        ac = cable.minimum_size_for_drop(system, d.supply_voltage_v, cur.out("current_a"), d.ac_cable_length_m,
+                                         d.ac_drop_limit_pct, d.conductor, d.conductor_temp_c, 1.0)
+        ac.name = "Inverter-to-main-board AC cable (voltage-drop sizing)"
+        results.append(ac)
+    else:
+        cur.warnings.append("Inverter AC cable not checked: cable length was not entered.")
 
     if hybrid:
         dc_i = battery_dc_current(inv_kw, d.battery_voltage_v)
         results.append(dc_i)
-        dc = cable.minimum_size_for_drop("dc", d.battery_voltage_v, dc_i.out("dc_current_a"), d.dc_cable_length_m,
-                                         d.dc_drop_limit_pct, d.conductor, d.conductor_temp_c)
-        dc.name = "Battery-to-inverter DC cable (voltage-drop sizing)"
-        results.append(dc)
+        if d.dc_cable_length_m:
+            if not d.dc_drop_limit_pct:
+                raise ValidationError("Enter the DC voltage-drop limit (%) for the battery cable.")
+            dc = cable.minimum_size_for_drop("dc", d.battery_voltage_v, dc_i.out("dc_current_a"), d.dc_cable_length_m,
+                                             d.dc_drop_limit_pct, d.conductor, d.conductor_temp_c)
+            dc.name = "Battery-to-inverter DC cable (voltage-drop sizing)"
+            results.append(dc)
+        else:
+            dc_i.warnings.append("Battery DC cable not checked: cable length was not entered.")
     return results
 
 
@@ -145,3 +173,39 @@ def summary(results: list[CalcResult]) -> dict[str, str]:
         elif r.name.startswith("Battery-to-inverter"):
             out["Battery cable (VD only)"] = f"{o['min_size_mm2'].value:g} mm² ({o['voltage_drop_pct'].value:.2f}%)"
     return out
+
+
+def plain_summary(results: list[CalcResult]) -> list[str]:
+    """The design in plain words for a non-engineer (all numbers come from the calculations)."""
+    lines: list[str] = []
+    pv = next((r for r in results if r.name.startswith("Solar PV")), None)
+    if pv is None:
+        return lines
+    o = pv.outputs
+    n = o["panel_count"].value
+    lines.append(f"You need {n} solar panel{'s' if n != 1 else ''} of {pv.inputs['panel_wp'].value:g} W each "
+                 f"({o['pv_kwp'].value:.2f} kW in total), needing about {o['array_area_m2'].value:.0f} m² of roof.")
+    gen = o["annual_generation_kwh"].value
+    lines.append(f"They should produce about {gen:,.0f} units (kWh) a year - about {gen / 12:,.0f} units a month on "
+                 f"average, less in the monsoon and more in spring - which is about "
+                 f"{min(o['solar_fraction_pct'].value, 999):.0f}% of the electricity you use.")
+    lines.append(f"Inverter (the box that turns solar power into normal household power): about "
+                 f"{o['inverter_ac_kw'].value:.1f} kW.")
+    if "battery_nominal_kwh" in o:
+        lines.append(f"Battery: about {o['battery_nominal_kwh'].value:.1f} kWh in total, of which "
+                     f"{o['battery_usable_kwh'].value:.1f} kWh can be used during power cuts.")
+    if "annual_savings" in o:
+        lines.append(f"Estimated saving on electricity bills: about {o['annual_savings'].value:,.0f} "
+                     f"{o['annual_savings'].unit.split('/')[0]} per year.")
+    if "simple_payback_years" in o:
+        lines.append(f"The system would pay for itself in about {o['simple_payback_years'].value:.1f} years.")
+    for r in results:
+        if r.name.startswith("Inverter-to-main-board"):
+            lines.append(f"Cable from inverter to main switchboard: at least {r.out('min_size_mm2'):g} mm² "
+                         f"{r.inputs['material'].value} (by voltage drop).")
+        if r.name.startswith("Battery-to-inverter"):
+            lines.append(f"Battery cable: at least {r.out('min_size_mm2'):g} mm² {r.inputs['material'].value} "
+                         f"(by voltage drop).")
+    lines.append("This is a first estimate. A qualified electrical engineer must check it, the site and the "
+                 "equipment before anything is bought or installed.")
+    return lines

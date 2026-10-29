@@ -450,7 +450,7 @@ def help_page():
 - It does not perform load-flow, short-circuit or protection-coordination studies.
 - The AI never computes engineering values; if it states a number not in the calculation, treat it as an error.
 
-**Typical workflow:** New project design → enter your data → Calculate everything → download the full report → engineer review. Saved projects are under My projects & reports.
+**Typical workflow:** Plan a solar system → answer the questions → Calculate → download the full report → engineer review. Saved projects are under My projects & reports.
 
 See `README.md` and `ENGINEERING_METHODS.md` in the project folder for full details.
 """)
