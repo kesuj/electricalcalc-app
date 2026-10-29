@@ -40,7 +40,7 @@ AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay
 ```powershell
 .venv\Scripts\python -m pytest
 ```
-The 99 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
+The 100 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
 
 ## Documentation
 [ARCHITECTURE](ARCHITECTURE.md) · [ENGINEERING_METHODS](ENGINEERING_METHODS.md) · [SECURITY](SECURITY.md) · [TESTING](TESTING.md) · [CHANGELOG](CHANGELOG.md)

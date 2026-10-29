@@ -95,14 +95,18 @@ def design():
             column_config={k: (st.column_config.CheckboxColumn(v) if k in ("critical", "motor") else
                                st.column_config.TextColumn(v) if k == "name" else
                                st.column_config.NumberColumn(v, min_value=0)) for k, v in LOAD_COLS.items()})
-        div = st.slider("Diversity factor (share of loads running at the same time)", 0.1, 1.0, 0.8, 0.05)
+        div = st.slider("Coincidence factor (share of loads running at the same time)", 0.1, 1.0, 1.0, 0.05,
+                        help="1.0 = all loads can run together (safe default for small buildings). Large buildings "
+                             "with many loads are often 0.6-0.8. Note: textbook *diversity* factor is the inverse "
+                             "(e.g. coincidence 0.8 = diversity 1.25). Affects peak kW and inverter size, not kWh/day.")
+        st.caption(f"Equivalent diversity factor: {1 / div:.2f}")
         st.caption("Tick **Critical** for loads that must run during power cuts (sizes the battery). "
                    "Tick **Motor** for fridges, pumps, fans, ACs (surge warning).")
     else:
         a, b = st.columns(2)
         monthly = a.number_input("Average monthly consumption (kWh = units)", 1.0, 1e7, 300.0)
         peak = b.number_input("Peak load (kW, 0 = unknown)", 0.0, 1e5, 0.0) or None
-        div = 0.8
+        div = 1.0
 
     # ---- 4. system -----------------------------------------------------------------------
     st.subheader("4. Solar system")
@@ -158,7 +162,7 @@ def design():
             if loads_df is not None:
                 loads = [{k: (None if pd.isna(v) else v) for k, v in row.items()} for row in loads_df.to_dict("records")]
             d = ProjectDesign(
-                resource=resource, location_label=location_label, loads=loads, diversity_factor=div,
+                resource=resource, location_label=location_label, loads=loads, coincidence_factor=div,
                 monthly_kwh=monthly, peak_load_kw=peak, backup_kwh_per_day=backup_manual,
                 system_type="hybrid_battery" if hybrid else "grid_tied", panel_wp=wp, panel_area_m2=parea,
                 available_area_m2=area or None, target_offset_pct=offset, dc_ac_ratio=ratio, battery_voltage_v=vbat,

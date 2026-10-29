@@ -25,6 +25,11 @@ Limitations: no harmonics, no unbalance, no tariff slabs or demand charges. PF c
 - **Not modelled:** hourly self-consumption, shading, row spacing, degradation, tariff escalation, temperature effects beyond PVGIS, string/MPPT voltage design. The existing off-grid tool (`../solar-sizing-tool`) covers surge and DC cable checks for off-grid systems.
 - **Cross-check:** for Kathmandu (27.7172 N, 85.324 E, 27° tilt, south, 14% loss), PVGIS returned E_y = 1426.64 kWh/kWp/yr (ERA5, 2005–2023). The monthly values sum to the annual value within 0.5% (tested). That is about 3.9 kWh/kWp/day, which is in the expected range for the Kathmandu valley.
 
+## Load schedule (`ecalc/calc/loads.py`)
+- Connected kW = Σ W × qty / 1000; daily kWh = Σ W × qty × h / 1000.
+- Maximum demand = connected kW × **coincidence (simultaneity) factor** (≤ 1, default 1.0). The textbook **diversity factor** (Σ individual max demands / group max demand, ≥ 1) is its inverse and is printed alongside.
+- The factor affects peak kW and hybrid inverter sizing only, never energy. Values below 1 with fewer than 10 load types trigger an undersizing warning.
+
 ## C. Cable voltage drop (`ecalc/calc/cable.py`)
 - R_20 is taken from the IEC 60228 Table 2 maximum conductor resistance (class 2; copper 0.75–300 mm², aluminium 16–300 mm²). This is more conservative than ρ/A because it includes stranding.
 - Temperature: R_T = R_20 (1 + α20 (T − 20)), α20 = 0.00393 (Cu), 0.00403 (Al).

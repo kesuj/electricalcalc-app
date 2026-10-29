@@ -46,7 +46,7 @@ def test_load_schedule_invalid(rows):
 
 
 def _design(**kw):
-    base = dict(resource=SolarResource.from_peak_sun_hours(5, 20), loads=LOADS, diversity_factor=0.8,
+    base = dict(resource=SolarResource.from_peak_sun_hours(5, 20), loads=LOADS, coincidence_factor=0.8,
                 system_type="hybrid_battery", panel_wp=550, panel_area_m2=2.6, battery_voltage_v=48,
                 battery_dod_pct=80, supply_phases=1, supply_voltage_v=230, ac_cable_length_m=20,
                 ac_drop_limit_pct=3, dc_cable_length_m=3, dc_drop_limit_pct=1)
@@ -89,3 +89,13 @@ def test_design_requires_demand_and_backup():
 
 def test_battery_dc_current():
     assert battery_dc_current(5, 48, 95).out("dc_current_a") == pytest.approx(109.65, rel=1e-4)
+
+
+def test_coincidence_factor_is_inverse_of_diversity_and_warns_for_small_lists():
+    r = load_schedule(LOADS, 0.8)
+    assert r.out("max_demand_kw") == pytest.approx(2.07 * 0.8)
+    assert any("1.25" in a for a in r.assumptions)          # equivalent diversity factor 1/0.8
+    assert any("undersize the inverter" in w for w in r.warnings)
+    full = load_schedule(LOADS)                             # default 1.0: no undersizing warning
+    assert full.out("max_demand_kw") == pytest.approx(2.07)
+    assert not any("undersize" in w for w in full.warnings)

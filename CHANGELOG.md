@@ -11,6 +11,11 @@
 - Demonstration project (clearly labelled), sample report, screenshots.
 - 87 automated tests.
 
+## 0.2.2 - 2026-10-29
+### Fixed
+- Renamed "diversity factor" (≤ 1) to the correct term **coincidence (simultaneity) factor**; the report also shows the equivalent textbook diversity factor (its inverse).
+- Default changed from 0.8 to 1.0: with few loads, 0.8 could undersize the inverter. A warning is shown when a value below 1 is used with fewer than 10 load types.
+
 ## 0.2.1 - 2026-10-29
 ### Fixed
 - Peak-sun-hours mode defaulted to 14% losses (the PVGIS *system*-loss default), which ignored temperature and reflection losses and overestimated generation by about 10%. It now asks for *total* losses, defaulting to 23% (PR ≈ 0.77), with explanatory help text.
@@ -18,7 +23,7 @@
 ## 0.2.0 - 2026-10-29
 ### Added
 - **New project design** start page: one form → load schedule, PV sizing, inverter AC current, AC cable, battery DC current and DC cable → full PDF/Markdown report; project auto-saved.
-- Load schedule calculation (connected load, maximum demand with diversity, critical/backup energy, motor surge warning).
+- Load schedule calculation (connected load, maximum demand with coincidence factor, critical/backup energy, motor surge warning).
 - 10 new tests (98 total), including an end-to-end run of the new page.
 
 ## 0.1.1 - 2026-10-29

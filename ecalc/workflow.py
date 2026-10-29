@@ -20,7 +20,7 @@ class ProjectDesign:
     location_label: str = ""
     # demand: either a load list or a monthly bill figure
     loads: list[dict] = field(default_factory=list)
-    diversity_factor: float = 0.8
+    coincidence_factor: float = 1.0
     monthly_kwh: float | None = None
     peak_load_kw: float | None = None
     backup_kwh_per_day: float | None = None
@@ -71,7 +71,7 @@ def run_full_design(d: ProjectDesign) -> list[CalcResult]:
     results: list[CalcResult] = []
     peak_kw, backup = d.peak_load_kw, d.backup_kwh_per_day
     if d.loads:
-        ls = load_schedule(d.loads, d.diversity_factor)
+        ls = load_schedule(d.loads, d.coincidence_factor)
         results.append(ls)
         daily = ls.out("daily_kwh")
         peak_kw = peak_kw or ls.out("max_demand_kw")
