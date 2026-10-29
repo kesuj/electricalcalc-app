@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4 - 2026-10-29
+### Changed
+- Removed the six-tab "Electrical tools" page; the app stays focused on solar design. The engine functions remain (tested, used internally).
+- New **Extra tools → Power-factor correction** page. The existing PF can be derived from kWh and kVArh meter or bill readings (PF = kWh/√(kWh²+kVArh²)), with maximum demand kW as the sizing basis.
+
 ## 0.2.3 - 2026-10-29
 ### Changed
 - Merged "Home & projects" and "Reports & history" into one page, **My projects & reports** (project list, empty-project creation, demo loader, report download, deletion).

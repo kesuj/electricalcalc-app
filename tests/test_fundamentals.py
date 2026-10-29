@@ -89,3 +89,18 @@ def test_unit_conversions():
     assert f.kcmil_to_mm2(250) == pytest.approx(126.68, rel=1e-4)
     with pytest.raises(ValidationError):
         f.awg_to_mm2(50)
+
+
+def test_pf_from_meter_readings_hand_calc():
+    # 1000 kWh, 750 kVArh -> PF = 1000 / 1250 = 0.8
+    assert f.pf_from_energy(1000, 750) == pytest.approx(0.8)
+    assert f.pf_from_energy(1000, 0) == pytest.approx(1.0)
+    # 100 kW max demand, 0.80 -> 0.95: Qc = 100 (0.75 - 0.328684) = 42.13 kvar
+    r = f.pf_correction_from_meter(100, 1000, 750, 0.95)
+    assert r.out("capacitor_kvar") == pytest.approx(42.132, rel=1e-4)
+    assert r.inputs["pf_existing"].value == pytest.approx(0.8)
+    assert r.equations[0].startswith("PF_avg")
+    with pytest.raises(ValidationError):          # PF already better than target
+        f.pf_correction_from_meter(100, 1000, 100, 0.95)
+    with pytest.raises(ValidationError):
+        f.pf_from_energy(0, 10)

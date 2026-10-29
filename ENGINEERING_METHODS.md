@@ -3,6 +3,7 @@
 All methods are preliminary-design methods. Each result in the app and report lists its own inputs, equations, assumptions and warnings. This file records the reasoning and the limitations.
 
 ## A. Fundamentals (`ecalc/calc/fundamentals.py`)
+Only power-factor correction is exposed in the app (Extra tools). The other functions remain in the engine, are tested, and are used internally (e.g. inverter current).
 | Calculation | Method |
 |---|---|
 | Ohm's law | V = IR, P = VI (exactly two inputs; resistive circuit) |
@@ -10,6 +11,7 @@ All methods are preliminary-design methods. Each result in the app and report li
 | 3-phase power | S = √3 V_LL I (balanced, sinusoidal) |
 | Load current | I = P / (V cos φ) or P / (√3 V_LL cos φ) |
 | PF correction | Qc = P (tan φ1 − tan φ2); C per phase = Qc / (3ωV_LL²) for delta, Qc / (ωV_LL²) for star |
+| PF from meter readings | PF_avg = kWh / √(kWh² + kVArh²); sizing uses maximum demand kW (not the average) |
 | Energy | E = P × h × days; cost = E × flat tariff |
 | Conversions | hp = 0.745699872 kW; metric hp = 0.73549875 kW; kWh = 3.6 MJ; AWG d = 0.127 mm × 92^((36−n)/39); kcmil × 0.506707479 = mm² |
 

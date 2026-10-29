@@ -110,65 +110,35 @@ def solar():
         save_and_export(r, "solar", "solar")
 
 
-# ---- Electrical tools --------------------------------------------------------------------
-def electrical():
-    page_header("🔌 Electrical calculation tools", "Fundamentals with stated equations, units and assumptions.")
-    tabs = st.tabs(["AC power", "Load current", "PF correction", "Ohm's law", "Energy & cost", "Unit conversions"])
-    with tabs[0]:
-        a, b, c, d = st.columns(4)
-        ph = a.selectbox("Phases", [3, 1], key="acp_ph")
-        v = b.number_input("Voltage (V, line-line for 3-phase)", 1.0, 1e6, 400.0 if ph == 3 else 230.0, key="acp_v")
-        i = c.number_input("Line current (A)", 0.001, 1e6, 10.0, key="acp_i")
-        pf = d.number_input("Power factor", 0.01, 1.0, 0.85, 0.01, key="acp_pf")
-        lag = st.radio("PF type", ["Lagging (inductive)", "Leading (capacitive)"], horizontal=True, key="acp_l")
-        _run(lambda: fun.ac_power(v, i, pf, ph, lag.startswith("Lag")), "ac_power", "acp")
-    with tabs[1]:
-        a, b, c, d = st.columns(4)
-        ph = a.selectbox("Phases", [3, 1], key="lc_ph")
-        p = b.number_input("Real power (kW)", 0.001, 1e6, 15.0, key="lc_p")
-        v = c.number_input("Voltage (V)", 1.0, 1e6, 400.0 if ph == 3 else 230.0, key="lc_v")
-        pf = d.number_input("Power factor", 0.01, 1.0, 0.85, 0.01, key="lc_pf")
-        _run(lambda: fun.current_from_power(p, v, pf, ph), "load_current", "lc")
-    with tabs[2]:
+# ---- Power-factor correction -------------------------------------------------------------
+def pf_page():
+    page_header("⚡ Power-factor correction",
+                "Capacitor bank size to raise power factor - e.g. to avoid utility low-PF penalties.")
+    src = st.radio("Existing power factor", ["From meter / bill readings (kWh and kVArh)", "I know the power factor"],
+                   horizontal=True)
+    a, b, c = st.columns(3)
+    p = a.number_input("Maximum demand (kW)", 0.001, 1e6, 100.0,
+                       help="Sizing basis. Use the bill's maximum demand or a measured peak, not the average.")
+    if src.startswith("From"):
+        kwh = b.number_input("Active energy in the period (kWh)", 0.001, 1e9, 20000.0)
+        kvarh = c.number_input("Reactive energy in the period (kVArh)", 0.0, 1e9, 15000.0)
+        try:
+            st.caption(f"Average power factor from these readings: **{fun.pf_from_energy(kwh, kvarh):.3f}**")
+        except ValidationError as e:
+            show_error(e)
+    else:
+        pf1 = b.number_input("Existing PF", 0.01, 0.999, 0.70, 0.01)
+    pf2 = st.number_input("Target PF", 0.02, 1.0, 0.95, 0.01,
+                          help="Check the utility's minimum PF requirement for your tariff category.")
+    with st.expander("Capacitance per phase (optional)"):
         a, b, c = st.columns(3)
-        p = a.number_input("Real power (kW)", 0.001, 1e6, 100.0, key="pf_p")
-        pf1 = b.number_input("Existing PF", 0.01, 0.999, 0.70, 0.01, key="pf_1")
-        pf2 = c.number_input("Target PF", 0.02, 1.0, 0.95, 0.01, key="pf_2")
-        a, b, c = st.columns(3)
-        v = a.number_input("Line voltage for capacitance (V, 0 = skip)", 0.0, 1e6, 400.0, key="pf_v")
-        f = b.selectbox("Frequency (Hz)", [50.0, 60.0], key="pf_f")
-        conn = c.selectbox("Capacitor connection", ["delta", "star"], key="pf_c")
+        v = a.number_input("Line voltage (V, 0 = skip)", 0.0, 1e6, 400.0)
+        f = b.selectbox("Frequency (Hz)", [50.0, 60.0])
+        conn = c.selectbox("Capacitor connection", ["delta", "star"])
+    if src.startswith("From"):
+        _run(lambda: fun.pf_correction_from_meter(p, kwh, kvarh, pf2, v or None, f, conn), "pf_correction", "pfc")
+    else:
         _run(lambda: fun.pf_correction(p, pf1, pf2, v or None, f, conn), "pf_correction", "pfc")
-    with tabs[3]:
-        st.caption("Enter exactly two values; leave the unknown at 0.")
-        a, b, c = st.columns(3)
-        v = a.number_input("Voltage (V)", 0.0, 1e7, 230.0, key="o_v")
-        i = b.number_input("Current (A)", 0.0, 1e7, 0.0, key="o_i")
-        rr = c.number_input("Resistance (Ω)", 0.0, 1e9, 46.0, key="o_r")
-        _run(lambda: fun.ohms_law(v or None, i or None, rr or None), "ohms_law", "ohm")
-    with tabs[4]:
-        a, b, c, d = st.columns(4)
-        p = a.number_input("Average power (kW)", 0.001, 1e6, 2.0, key="e_p")
-        h = b.number_input("Hours per day", 0.0, 24.0, 8.0, key="e_h")
-        days = c.number_input("Days", 1.0, 3660.0, 30.0, key="e_d")
-        t = d.number_input("Tariff per kWh (0 = skip)", 0.0, 1e4, 0.0, key="e_t")
-        cur = st.selectbox("Currency", CURRENCIES, key="e_c")
-        _run(lambda: fun.energy_cost(p, h, days, t or None, cur), "energy", "en")
-    with tabs[5]:
-        a, b = st.columns(2)
-        with a:
-            hp = st.number_input("Horsepower (hp)", 0.0, 1e6, 10.0)
-            st.write(f"= **{hp * fun.HP_TO_KW:,.3f} kW** (imperial hp)  ·  {hp * fun.METRIC_HP_TO_KW:,.3f} kW (metric hp)")
-            kwh = st.number_input("Energy (kWh)", 0.0, 1e9, 1.0)
-            st.write(f"= **{kwh * fun.KWH_TO_MJ:,.3f} MJ**")
-        with b:
-            awg = st.number_input("AWG (use -1 for 2/0, -2 for 3/0, -3 for 4/0)", -3, 40, 10)
-            try:
-                st.write(f"= **{fun.awg_to_mm2(int(awg)):.3f} mm²** (solid conductor, ASTM B258 diameter)")
-            except ValidationError as e:
-                show_error(e)
-            kc = st.number_input("kcmil", 1.0, 5000.0, 250.0)
-            st.write(f"= **{fun.kcmil_to_mm2(kc):.2f} mm²**")
 
 
 def _run(fn, kind, key):
@@ -469,7 +439,7 @@ def help_page():
     st.markdown(f"""
 **What {config.APP_NAME} does**
 - Preliminary solar PV sizing (grid-tied / hybrid) with PVGIS data or your own peak sun hours.
-- Electrical fundamentals: AC power, load current, power-factor correction, Ohm's law, energy cost, unit conversions.
+- Power-factor correction: capacitor kvar and µF, with the existing PF taken from kWh/kVArh meter readings or entered directly.
 - Cable voltage drop using IEC 60228 conductor resistances, and minimum size by voltage-drop criterion.
 - Draft PDF / Markdown reports with inputs, equations, results, assumptions, warnings and a review record.
 - An optional AI assistant that *explains* results, plus a local document search with page citations.

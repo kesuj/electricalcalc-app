@@ -12,7 +12,7 @@
   - real yield data from [PVGIS](https://re.jrc.ec.europa.eu/pvg_tools/) (EC JRC), or your own peak-sun-hours value
   - panel count, inverter sizing, and battery sizing that keeps **usable vs nominal** capacity separate
   - savings and payback, monthly table, preliminary bill of materials
-- **Electrical tools:** Ohm's law, 1-phase/3-phase power, load current, power-factor correction (kvar and µF), energy cost, unit conversions.
+- **Power-factor correction:** capacitor bank kvar and µF per phase, with the existing PF taken from kWh/kVArh meter readings or entered directly.
 - **Cable voltage drop:** DC / 1-phase / 3-phase, IEC 60228 conductor resistances with temperature correction, and smallest size meeting a drop limit (voltage-drop criterion only; ampacity is deliberately not claimed).
 - **Reports:** PDF and editable Markdown with inputs, equations, results, assumptions, warnings, sources and a review record. An optional AI commentary section is kept separate from calculated values.
 - **AI assistant (optional):**
@@ -40,7 +40,7 @@ AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay
 ```powershell
 .venv\Scripts\python -m pytest
 ```
-The 99 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
+The 101 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
 
 ## Documentation
 [ARCHITECTURE](ARCHITECTURE.md) · [ENGINEERING_METHODS](ENGINEERING_METHODS.md) · [SECURITY](SECURITY.md) · [TESTING](TESTING.md) · [CHANGELOG](CHANGELOG.md)

@@ -10,7 +10,7 @@ from ecalc import config
 from ecalc.storage import Store
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["solar", "electrical", "cable", "report_page", "assistant", "docs", "settings", "usage", "help_page"]
+PAGES = ["solar", "pf_page", "cable", "report_page", "assistant", "docs", "settings", "usage", "help_page"]
 
 
 def _app(page: str) -> AppTest:
@@ -100,3 +100,12 @@ def test_loss_default_depends_on_solar_data_mode():
     assert next(n for n in at.number_input if n.label.startswith("System losses")).value == 14.0
     next(r for r in at.radio if r.label == "Solar data").set_value("I know the peak sun hours").run()
     assert next(n for n in at.number_input if n.label.startswith("Total losses")).value == 23.0
+
+
+def test_pf_page_meter_mode_shows_hand_calc():
+    """Default meter mode: 20000 kWh / 15000 kVArh -> PF 0.8; 100 kW to 0.95 -> 42.13 kvar."""
+    at = _app("pf_page")
+    at.run()
+    assert not at.exception
+    assert any("0.800" in c.value for c in at.caption)
+    assert any("42.13" in m.value for m in at.metric), [m.value for m in at.metric]

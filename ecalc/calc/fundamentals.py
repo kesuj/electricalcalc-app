@@ -133,6 +133,29 @@ def pf_correction(real_power_kw: float, pf_existing: float, pf_target: float,
     )
 
 
+def pf_from_energy(kwh: float, kvarh: float) -> float:
+    """Average power factor over a billing period from active and reactive energy meter readings."""
+    p = require_positive("Active energy (kWh)", kwh)
+    q = require_positive("Reactive energy (kVArh)", kvarh, allow_zero=True)
+    return p / math.hypot(p, q)
+
+
+def pf_correction_from_meter(max_demand_kw: float, kwh: float, kvarh: float, pf_target: float,
+                             voltage_ll_v: float | None = None, frequency_hz: float = 50.0,
+                             connection: str = "delta") -> CalcResult:
+    """PF correction where the existing PF is derived from kWh and kVArh readings (e.g. an industrial bill)."""
+    pf1 = pf_from_energy(kwh, kvarh)
+    r = pf_correction(max_demand_kw, pf1, pf_target, voltage_ll_v, frequency_hz, connection)
+    r.name = "Power-factor correction estimate (from meter readings)"
+    r.inputs = {"kwh": Q(kwh, "kWh", "Active energy in period"), "kvarh": Q(kvarh, "kVArh", "Reactive energy in period"),
+                "max_demand_kw": Q(max_demand_kw, "kW", "Maximum demand (sizing basis)"), **r.inputs}
+    r.inputs["pf_existing"].label = "Existing PF (average, from meter readings)"
+    r.equations.insert(0, "PF_avg = kWh / √(kWh² + kVArh²)")
+    r.assumptions.append("Existing PF is the billing-period average; PF at maximum demand may differ. Logged "
+                         "measurements give a more reliable basis for automatic (stepped) banks.")
+    return r
+
+
 def energy_cost(power_kw: float, hours_per_day: float, days: float = 30,
                 tariff_per_kwh: float | None = None, currency: str = "NPR") -> CalcResult:
     p = require_positive("Power", power_kw)
