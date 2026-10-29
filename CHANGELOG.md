@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.0 - 2026-10-30
+### Added
+- **Public website (GitHub Pages)**: landing page, worked examples, component guide, sample reports and the full app running in the visitor's browser (stlite / Pyodide - no server; nothing typed leaves the computer). Build: `python scripts/build_site.py`.
+- **Baked PVGIS data** (`scripts/bake_pvgis.py`, `web/pvgis_nepal.json`): real PVGIS v5.3 results for 27 Nepal cities x every roof tilt/direction the app asks for, because browsers cannot call PVGIS (no CORS). Nearest city/angle is used and named in the report; system loss is applied exactly.
+- **Solar farm cost estimate** (`ecalc/calc/farm_cost.py`): itemised NPR low/central/high from the construction-package quantities, sources tagged [S]/[A], plus soft costs and contingency; shown in the Construction package and the PDF.
+- **Whole-plant wiring drawing** for solar farms (strings -> inverters -> LV board -> transformer -> 11 kV switchgear -> NEA metering -> line), on screen and in the PDF.
+- Worked examples: off-grid small home in Jumla; 500 kW and 1 MW farms near Nepalgunj (`scripts/site_examples.py`, PDFs in docs/samples).
+- `?page=farm` link opens the Solar farm page directly.
+### Fixed
+- Farm package built more strings than asked (0.5 MW gave 0.585 MW); block DC kWp now uses the actual strings.
+
 ## 0.6.0 - 2026-10-30
 ### Added
 - **Every part explained** (Home report section B): 15 component cards personalised to the user's numbers - what it does, types compared, best choice for this system, how to select, buying checks (NEPQA-2025, fake-product signs), series/parallel, how to connect, common mistakes.

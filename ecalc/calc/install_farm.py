@@ -200,8 +200,9 @@ def build_farm_package(fr: CalcResult, sr: CalcResult, mod: Module, inv: Inverte
     n_series = int(sr.out("modules_per_string"))
     strings_inv = int(sr.out("strings_used"))
     dc_kw_inv = sr.out("dc_kw_per_inverter")
-    n_inv = math.ceil(fi.capacity_mwp * 1000 / dc_kw_inv)
-    n_strings = n_inv * strings_inv
+    # strings needed for the requested size, then inverters to hold them (not every inverter filled to the brim)
+    n_strings = math.ceil(fi.capacity_mwp * 1e6 / (n_series * mod.wp))
+    n_inv = math.ceil(n_strings / strings_inv)
     n_modules = n_strings * n_series
     mwp_actual = n_modules * mod.wp / 1e6
     wide = pi.table_modules_wide or n_series
@@ -213,12 +214,15 @@ def build_farm_package(fr: CalcResult, sr: CalcResult, mod: Module, inv: Inverte
     ac_v = pi.inverter_ac_v or (800.0 if pi.inverter_type == "string" else 400.0)
 
     blocks = []
+    strings_left = n_strings
     for b in range(n_blocks):
         k = min(per_block, n_inv - b * per_block)
+        blk_strings = min(k * strings_inv, strings_left)       # actual strings in this block
+        strings_left -= blk_strings
         kva = k * inv.ac_kva
         tx = _std_transformer(kva)
         blocks.append({"Block": b + 1, "Inverters": k, "Inverter kVA (sum)": round(kva), "Transformer (kVA)": tx,
-                       "Ratio": f"{ac_v / 1000:g}/{mv_kv:g} kV", "DC kWp": round(k * dc_kw_inv, 1),
+                       "Ratio": f"{ac_v / 1000:g}/{mv_kv:g} kV", "DC kWp": round(blk_strings * n_series * mod.wp / 1000, 1),
                        "MV current (A)": round(tx * 1000 / (math.sqrt(3) * mv_kv * 1000), 1)})
     total_tx = sum(b["Transformer (kVA)"] for b in blocks)
     export_mw = n_inv * inv.ac_kva / 1000

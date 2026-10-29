@@ -5,7 +5,8 @@ Inverter 330 kVA, 1500 V, MPPT 500-1500 V, 390 A, 6 inputs, 450 kW DC max, 800 V
 Voc(−0.3) = 49.5 + 0.12375 × 25.3 = 52.631 → ×1.05 = 55.26 → N_max = floor(1500/55.26) = 27
 Vmp(70) = 41.6 − 0.12064 × 45 = 36.171 → ×0.98×0.9 = 31.90 → N_min = 16 → 27 chosen
 Strings = floor(390/14) = 27; DC = 27 × 27 × 0.55 = 400.95 kW ≤ 450.
-Inverters = ceil(10000/400.95) = 25; strings 675; modules 18,225; 10.024 MWp.
+Strings = ceil(10e6 / (27 x 550)) = ceil(673.4) = 674 (build to the requested size, not full inverters);
+inverters = ceil(674 / 27) = 25; modules 674 x 27 = 18,198; 10.009 MWp.
 Block = floor(3150/330) = 9 inverters → 3 blocks (9, 9, 7): 2970 → 3150 kVA; 2310 → 2500 kVA; 33 kV (> 3 MWp).
 String inputs: ceil(27/6) = 5 per input → reverse 4 × 1.25 × 14 = 70 A > 30 A → fuses; 21 ≤ In ≤ 30 → 25 A.
 String cable: CCC ≥ 25 A at 40 °C → 4 mm² (32 × 0.87 = 27.8 A); VD 2 × 13.2 × 0.06 × 5.516 / 1123.2 = 0.78 %.
@@ -36,12 +37,12 @@ def test_counts_and_blocks():
     p = _pkg()
     c = p.counts
     assert p.hierarchy["modules_per_string"] == 27 and p.hierarchy["strings_per_inverter"] == 27
-    assert c["inverters"]["value"] == 25 and c["strings"]["value"] == 675 and c["modules"]["value"] == 18225
-    assert c["mwp_actual"]["value"] == pytest.approx(10.024, abs=1e-3)
+    assert c["inverters"]["value"] == 25 and c["strings"]["value"] == 674 and c["modules"]["value"] == 18198
+    assert c["mwp_actual"]["value"] == pytest.approx(10.009, abs=1e-3)
     assert c["blocks"]["value"] == 3 and c["mv_kv"]["value"] == 33.0
     assert [b["Transformer (kVA)"] for b in p.blocks] == [3150, 3150, 2500]
     assert p.blocks[0]["MV current (A)"] == pytest.approx(55.1, abs=0.1)
-    assert c["tables"]["value"] == 338            # 18225 / (2 × 27) = 337.5 -> 338
+    assert c["tables"]["value"] == 337            # 18198 / (2 × 27) = 337.0 -> 337
 
 
 def test_string_fuses_and_cables():

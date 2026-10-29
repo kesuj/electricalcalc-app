@@ -23,6 +23,8 @@ from ecalc.solar_data import PVGISError
 from ui.charts import BAD, SUN, USE, cumulative_cash, losses_waterfall
 from ui.book_farm import book_farm_tab
 from ecalc.calc.install_farm import PackageInputs, build_farm_package
+from ecalc.calc.farm_cost import farm_cost
+from ecalc.drawings import farm_sld_svg
 from ui.package_view import farm_sections, render_sections
 from ui.common import get_store, page_header, render_result
 from ui.hints import missing, num
@@ -247,7 +249,12 @@ def _results(store, out: dict, eng: dict):
         pkg_error = None
     except ValidationError as e:
         pkg, pkg_error = None, str(e)
-    sections = farm_sections(pkg) if pkg else []
+    cost = sld = None
+    if pkg:
+        cost = farm_cost(pkg, eng["wp"], eng["kva"], ss.get("f_pk_line", 2.0), fr.out("land_ha"))
+        sld = farm_sld_svg(pkg, int(sr.out("modules_per_string")), sr.out("string_voc_cold_v"),
+                           sr.out("modules_per_string") * eng["vmp"], eng["wp"], eng["kva"])
+    sections = farm_sections(pkg, cost, sld) if pkg else []
 
     # ---- outputs ------------------------------------------------------------------------------
     with t_pkg:

@@ -25,6 +25,8 @@ Expected values were calculated by hand from first principles (see the table in 
 
 - **Live AI call, Ollama llama3.2:3b (2026-10-29):** asked about the 1φ 4 mm² voltage-drop result; the answer quoted 6.619 V and 2.878% exactly and listed the unchecked items (ampacity, protection, short-circuit). 26.6 s, $0.
 
+- **Browser build (2026-10-30, v0.7.0):** site served locally, Edge via Playwright: the stlite app loaded, the off-grid Jumla home and the 500 kW farm were calculated in the browser with no errors, and both PDFs downloaded with the same numbers as the server app (NPR 5.21 crore, 19 pages). Baked PVGIS matches live PVGIS for Kathmandu 25°/south (1488.38 kWh/kWp at 10 % loss; hourly profile within 0.05 W/m²). Landing page has no horizontal scroll at 390 px.
+
 ## Not yet tested (known gaps)
 - Gemini, OpenRouter and Anthropic have not had a live call (no keys configured); they are tested against simulated HTTP responses only.
 - No comparison against a second independent tool (e.g. PVWatts or PVsyst) for the full solar workflow. PVsyst is installed on this computer, so a cross-check of one case is a good next step.

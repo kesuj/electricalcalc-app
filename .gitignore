@@ -8,3 +8,5 @@ business/private/
 __pycache__/
 *.pyc
 .pytest_cache/
+# built website (scripts/build_site.py) - published to the public repo's docs/
+site/

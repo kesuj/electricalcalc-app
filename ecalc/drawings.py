@@ -435,3 +435,80 @@ def inverter_terminals_svg(mode: str) -> str:
         s.text(380, 344, "then the panels (most controllers need battery", 9, NOTE)
         s.text(380, 358, "voltage to start).", 9, NOTE)
     return s.svg()
+
+
+# ---- solar farm: one drawing from strings to the NEA substation -------------------------------------------
+def farm_sld_svg(pkg, n_series: int, string_voc_cold: float, string_vmp: float, module_wp: float,
+                 inverter_kva: float) -> str:
+    """Single-line wiring of a solar farm block: strings -> inverters -> AC combiner -> transformer ->
+    11/33 kV switchgear -> NEA metering -> line -> NEA substation, with cable sizes and protection."""
+    h = pkg.hierarchy or {}
+    sched = {r["Level"]: r for r in pkg.cable_schedule}
+    dc = next((r for k, r in sched.items() if k.startswith("PV string")), {})
+    lv = next((r for k, r in sched.items() if k.startswith("Inverter AC")), {})
+    line = next((r for k, r in sched.items() if k.startswith("Line to NEA")), {})
+    n_inv = pkg.counts["inverters"]["value"]
+    spi = h.get("strings_per_inverter", "?")
+    n_str = pkg.counts["strings"]["value"]
+    blk = pkg.blocks[0] if pkg.blocks else {}
+    mv_kv = pkg.counts.get("mv_kv", {}).get("value", 11)
+    fuse = next((r for r in pkg.boq if str(r.get("Item", "")).startswith("String fuses")), None)
+    s = _Svg(860)
+    s.text(20, 24, _latin1(f"Solar farm wiring - {pkg.counts['mwp_actual']['value']:g} MWp, {n_inv} inverters x "
+                           f"{inverter_kva:g} kVA, {mv_kv:g} kV connection"), 13, INK, bold=True)
+    # strings
+    s.text(20, 52, _latin1(f"1. STRINGS: {n_series} panels in SERIES ({n_series} x {module_wp:g} W). "
+                           f"{n_str} strings in total, {spi} per inverter (PARALLEL at the inverter inputs)."), 10, BLACK)
+    x0 = 30
+    for j in range(2):
+        y = 70 + j * 46
+        for i in range(6):
+            s.rect(x0 + i * 52, y, 44, 26, fill=PANEL, ident=f"farm_panel_{j}_{i}")
+            s.text(x0 + i * 52 + 22, y + 17, "PV", 9, INK, "middle")
+            if i < 5:
+                s.line(x0 + i * 52 + 44, y + 13, x0 + (i + 1) * 52, y + 13, RED, 1.6)
+        s.text(x0 + 6 * 52 + 4, y + 17, _latin1(f"... {n_series} in series"), 9, NOTE)
+        s.line(x0 + 6 * 52 + 110, y + 13, 470, y + 13, RED, 2)
+        s.line(x0 - 6, y + 13, x0, y + 13, BLACK, 2)
+    s.text(x0, 176, _latin1(f"(only 2 of the {spi} strings per inverter drawn)  String: {string_vmp:,.0f} V working, up to "
+                            f"{string_voc_cold:,.0f} V on the coldest morning."), 9, NOTE)
+    s.box(470, 66, 190, 96, "Inverter DC inputs (MPPTs)",
+          [_latin1(f"{dc.get('Selected', '4 mm2 Cu')} solar cable"),
+           _latin1(f"string fuse {fuse['Specification'].split(',')[0]}" if fuse else "no string fuse needed (<3 per input)"),
+           "DC switch inside inverter", "DC SPD Type 2 at input"], fill="#fff3d6")
+    # inverters
+    s.text(20, 210, _latin1(f"2. INVERTERS: {n_inv} x {inverter_kva:g} kVA string inverters, 3-phase "
+                            f"{lv.get('Voltage (V)', 800)} V AC output, on frames between table rows."), 10, BLACK)
+    for i in range(min(n_inv, 4)):
+        s.box(30 + i * 150, 224, 130, 46, f"Inverter {i + 1 if i < 3 or n_inv == 4 else n_inv}",
+              [_latin1(f"{inverter_kva:g} kVA, {spi} strings")], size=9)
+    if n_inv > 4:
+        s.text(30 + 3 * 150 - 12, 252, "...", 14, INK, "middle", True)
+    for i in range(min(n_inv, 4)):
+        s.line(95 + i * 150, 270, 95 + i * 150, 300, BROWN_L, 2)
+    s.line(95, 300, 95 + (min(n_inv, 4) - 1) * 150, 300, BROWN_L, 2)
+    s.text(560, 292, _latin1(f"{lv.get('Selected', '')} 3-ph + PE"), 9, NOTE)
+    s.text(560, 304, _latin1(f"{lv.get('Conductor length (km, est.)', '?')} km in total"), 9, NOTE)
+    # AC combiner
+    s.arrow(320, 300, 320, 330, BROWN_L, 2)
+    s.box(200, 330, 240, 48, "3. AC combiner board (LV)",
+          [_latin1(f"{n_inv} x {lv.get('Protective device (A)', '?')} A breakers, busbar, AC SPD")], fill="#fff3d6")
+    s.arrow(320, 378, 320, 408, BROWN_L, 2.4)
+    tx = blk.get("Transformer (kVA)", "?")
+    s.box(200, 408, 240, 56, "4. Step-up transformer",
+          [_latin1(f"{tx} kVA, {blk.get('Ratio', '0.8/11 kV')}, ONAN, Dyn11"), "neutral and tank to earth mesh"])
+    s.arrow(320, 464, 320, 494, INK, 2.4)
+    s.box(200, 494, 240, 56, _latin1(f"5. {mv_kv:g} kV switchgear (RMU / VCB)"),
+          ["overcurrent + earth-fault relays", "anti-islanding / grid protection"], fill="#fff3d6")
+    s.arrow(320, 550, 320, 580, INK, 2.4)
+    s.box(200, 580, 240, 48, "6. NEA revenue metering", ["CT/PT metering panel (NEA approved)"])
+    s.arrow(320, 628, 320, 668, INK, 2.4)
+    s.text(332, 652, _latin1(f"{mv_kv:g} kV line {line.get('Conductor length (km, est.)', '?')} km"), 9, NOTE)
+    s.box(200, 668, 240, 44, "7. NEA substation", ["connection agreement + PPA"])
+    # earth
+    s.poly([(470, 436), (560, 436), (560, 790)], EARTH, 1.8, dash="6,4")
+    s.poly([(30, 270), (30, 790), (560, 790)], EARTH, 1.8, dash="6,4")
+    s.box(450, 760, 210, 44, "Earth mesh + electrodes", ["frames, inverters, transformer"], fill=BATT)
+    s.text(20, 740, "Legend: red = DC +, black = DC -, brown = AC phase conductors, green dashed = earth.", 9, NOTE)
+    s.text(20, 754, _latin1("Every inverter, table frame, fence and the transformer are bonded to one earth system."), 9, NOTE)
+    return s.svg()

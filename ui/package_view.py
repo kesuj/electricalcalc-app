@@ -97,10 +97,22 @@ def render_sections(sections: list[dict]) -> None:
                 st.caption(sec["note"])
 
 
-def farm_sections(pkg) -> list[dict]:
+def farm_sections(pkg, cost=None, sld_svg: str | None = None) -> list[dict]:
     counts = [{"Item": v.get("label", k), "Quantity": v.get("value"), "Unit": v.get("unit", "")}
               for k, v in pkg.counts.items()]
-    return [
+    head = []
+    if cost is not None:
+        o = cost.outputs
+        head.append({"title": "Rough cost estimate (NPR)",
+                     "intro": (f"Central estimate NPR {o['total_central_crore'].value:,.2f} crore "
+                               f"(range {o['total_low_crore'].value:,.2f} - {o['total_high_crore'].value:,.2f} crore), "
+                               f"about NPR {o['per_kwp_central'].value:,.0f} per kWp. Land is not included."),
+                     "table": cost.tables["Cost breakdown"],
+                     "bullets": cost.assumptions + cost.warnings + [f"Benchmark: {b}" for b in cost.references]})
+    if sld_svg:
+        head.append({"title": "Wiring of the whole plant (strings to the NEA substation)",
+                     "svgs": [("Single-line wiring with cable sizes and protection", sld_svg)]})
+    return head + [
         {"title": "Plant at a glance", "intro": pkg.note,
          "bullets": [pkg.hierarchy.get("text", "")] + pkg.warnings, "table": counts},
         {"title": "Single-line diagram (one block)", "diagram": normalise_sld(pkg.sld),

@@ -1,5 +1,7 @@
 # ElectricalCalc AI
 
+**🌐 Website: https://kesuj.github.io/electricalcalc-app/** - the full app runs in your browser (no install, no sign-up), plus worked examples (off-grid home, 500 kW and 1 MW farms with itemised cost and wiring) and the Nepal solar component guide.
+
 **Preliminary solar PV and electrical calculations with every equation shown**, plus draft engineering reports and an optional AI assistant that *explains* results but never invents the numbers.
 
 > Preliminary design aid only. Outputs are drafts that require review by a qualified engineer. The software never labels a report as certified, approved or stamped.

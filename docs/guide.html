@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nepal solar component guide</title><meta name="description" content="Which solar panels, inverters, MPPT/PWM controllers, batteries, cables, connectors, protection and monitoring to buy in Nepal - and which are compulsory.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script><style>
+:root{--bg:#f6f8fb;--surface:#fff;--ink:#111a2b;--muted:#566175;--line:#e2e7ef;--brand:#16406b;--brand-ink:#fff;
+--sun:#f2a516;--sun-soft:#fff4dc;--ok:#1d7a4f;--warn:#a55a00;--code:#eef2f7;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 16px rgba(16,24,40,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d131d;--surface:#151e2c;--ink:#e7edf6;--muted:#9aa7bb;
+--line:#253247;--brand:#8ab8ea;--brand-ink:#0d131d;--sun:#f5b93a;--sun-soft:#2a2414;--ok:#5fd09a;--warn:#f0a548;--code:#1c2738;--shadow:none}}
+:root[data-theme="dark"]{--bg:#0d131d;--surface:#151e2c;--ink:#e7edf6;--muted:#9aa7bb;--line:#253247;--brand:#8ab8ea;--brand-ink:#0d131d;
+--sun:#f5b93a;--sun-soft:#2a2414;--ok:#5fd09a;--warn:#f0a548;--code:#1c2738;--shadow:none}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--brand)}img,svg{max-width:100%;height:auto}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+nav.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;gap:20px;height:58px}
+.logo{font-weight:800;text-decoration:none;color:var(--ink);display:flex;gap:8px;align-items:center;white-space:nowrap}
+.logo span{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--sun);color:#111}
+nav.top .links{display:flex;gap:18px;margin-left:auto;overflow-x:auto}
+nav.top .links a{color:var(--muted);text-decoration:none;font-size:.94rem;white-space:nowrap}nav.top .links a:hover{color:var(--ink)}
+.hero{padding:72px 0 40px}
+.eyebrow{display:inline-block;background:var(--sun-soft);color:var(--warn);font-weight:600;font-size:.82rem;padding:4px 10px;border-radius:99px}
+h1{font-size:clamp(30px,5.4vw,52px);line-height:1.08;letter-spacing:-.02em;margin:16px 0 14px;max-width:820px}
+.lead{font-size:clamp(1.05rem,2vw,1.22rem);color:var(--muted);max-width:700px;margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:650;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--surface)}
+.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:28px;color:var(--muted);font-size:.93rem}
+.facts b{color:var(--ink)}
+section{padding:44px 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.01em;margin:0 0 8px}
+h3{margin:0 0 6px;font-size:1.12rem}
+.sub{color:var(--muted);margin:0 0 24px;max-width:720px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+.card p{margin:0;color:var(--muted)}.card ul{margin:8px 0 0;padding-left:18px;color:var(--muted)}
+.icon{font-size:1.6rem;line-height:1;margin-bottom:10px}
+.steps{counter-reset:s;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.steps .card:before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--sun);color:#111;font-weight:800;margin-bottom:10px}
+.kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .v{font-size:1.45rem;font-weight:750;letter-spacing:-.01em}.kpi .l{color:var(--muted);font-size:.86rem}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--code);font-weight:650;white-space:nowrap}tr:last-child td{border-bottom:0}
+td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.total td{font-weight:750;background:var(--sun-soft)}
+.basis{color:var(--muted);font-size:.8rem}
+.tag{display:inline-block;font-size:.75rem;font-weight:650;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.tag.law{background:#fde7e7;color:#9b1c1c}.tag.safe{background:#fff1d6;color:#8a4b00}.tag.rec{background:#e3f1ff;color:#134a85}.tag.opt{background:#e8f6ee;color:#16603d}
+:root[data-theme="dark"] .tag,.dark .tag{filter:none}
+.drawing{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin:12px 0;overflow-x:auto}
+.drawing svg{display:block;margin:0 auto;min-width:560px}
+figure{margin:0}figcaption{font-weight:650;margin:18px 0 4px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.tabs button{font:inherit;padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.panel[hidden]{display:none}
+.note{border-left:4px solid var(--sun);background:var(--sun-soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:16px 0;color:var(--ink)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:10px 0}
+details summary{cursor:pointer;font-weight:650}
+.wire li{margin:6px 0}
+footer{padding:36px 0 56px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+.prose{max-width:820px}.prose h1{font-size:clamp(28px,4.5vw,40px)}.prose h2{margin-top:44px;padding-top:12px;border-top:1px solid var(--line)}
+.prose h3{margin-top:28px}.prose table{font-size:.86rem}.prose code{background:var(--code);padding:1px 5px;border-radius:5px}
+.prose .tablewrap table{margin:0}
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:18px 0}
+.toc ul{margin:0;padding-left:18px}
+@media (max-width:640px){nav.top .links{gap:14px}.hero{padding-top:44px}}
+</style></head><body>
+<nav class="top"><div class="wrap"><a class="logo" href="index.html"><span>⚡</span>ElectricalCalc AI</a>
+<div class="links"><a href="index.html#tools">Tools</a><a href="index.html#examples">Examples</a>
+<a href="guide.html" aria-current="page" style="color:var(--ink);font-weight:650">Component guide</a><a href="index.html#reports">Sample reports</a>
+<a href="app/">Open the app →</a></div></div></nav>
+<main class="wrap"><article class="prose" style="padding:40px 0">
+<p class="eyebrow">Researched October 2026 · sources cited inline</p>
+<div class="toc"><b>Contents</b><div class="toc">
+<ul>
+<li><a href="#choose-install-and-certify-every-nepali-solar-component">Choose, Install and Certify Every Nepali Solar Component</a><ul>
+<li><a href="#nepqa-2025-governs-the-boxes-not-the-wiring-between-them">NEPQA-2025 governs the boxes, not the wiring between them</a></li>
+<li><a href="#panels-and-mounting-topcon-on-hdg-or-aluminium-is-the-2026-baseline">Panels and mounting: TOPCon on HDG or aluminium is the 2026 baseline</a></li>
+<li><a href="#inverters-and-charge-controllers-must-match-the-cold-weather-string-voltage-first">Inverters and charge controllers must match the cold-weather string voltage first</a></li>
+<li><a href="#lifepo4-costs-about-a-third-as-much-per-lifetime-kwh-as-tubular-lead-acid">LiFePO4 costs about a third as much per lifetime kWh as tubular lead-acid</a></li>
+<li><a href="#cables-connectors-and-protection-the-parts-nepqa-ignores-cause-the-fires">Cables, connectors and protection: the parts NEPQA ignores cause the fires</a></li>
+<li><a href="#series-adds-volts-parallel-adds-amps-and-cold-sets-the-limit">Series adds volts, parallel adds amps, and cold sets the limit</a></li>
+<li><a href="#nea-owns-the-meter-a-competent-electrician-owns-the-ac-side-and-the-owner-owns-the-choices">NEA owns the meter, a competent electrician owns the AC side, and the owner owns the choices</a></li>
+<li><a href="#indicative-2026-npr-price-sheet-for-app-defaults">Indicative 2026 NPR price sheet for app defaults</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div><h1 id="choose-install-and-certify-every-nepali-solar-component">Choose, Install and Certify Every Nepali Solar Component</h1>
+<p>For a residential or small-commercial PV system in Nepal in 2025-2026, the safe default is this: <strong>n-type TOPCon half-cut modules at 21% efficiency or better</strong>, a <strong>pure-sine hybrid inverter with MPPT</strong> (or a string inverter if no backup is needed), <strong>48 V LiFePO4 batteries with a BMS that talks to the inverter</strong>, <strong>EN 50618/IEC 62930 PV cable</strong> with <strong>one brand of genuine IEC 62852 connectors</strong>, <strong>DC-rated</strong> isolators, fuses and SPDs, and <strong>two or more bonded earth electrodes under 10 Ω</strong>. Size the whole system for self-consumption, because the NEA export credit is only <strong>NPR 5.94/kWh</strong>. The governing component standard is AEPC's <strong>NEPQA-2025</strong> (August 2025, in force from October 2025, with Amendment-1 in April 2026). It sets hard minimums for modules, batteries, charge controllers and inverters. It says <strong>nothing</strong> about cables, breakers, SPDs, earthing or workmanship, so those follow IEC practice and AEPC tender specifications. The grid-connection rules are the weakest link. NEA's net-billing procedure was last extended only to Asar 2082 (mid-2025), and its document checklist, fees and trip settings could not be confirmed. Owners should treat the local NEA Distribution Centre as the final authority. Retail prices (modules about <strong>NPR 70-92/Wp</strong>, LFP about <strong>NPR 29,000-40,000/kWh</strong>, installed hybrid systems about <strong>NPR 84,000-117,000/kWp</strong>) come from aggregators and dealer sites, not an official index, and rose through 2026 as global module prices climbed. This report is organised so each component can become an entry in a design app's knowledge base. Each entry covers function, types, selection rules, the Nepali standard, datasheet checks, fake or poor-quality signs, price, installation, mistakes, maintenance and lifespan.</p>
+<p><strong>How to read the evidence.</strong> Statements with an inline link come from the cited source. Statements labelled <em>general practice</em> are standard IEC/industry engineering rules that the research team could not tie to a Nepal-specific or primary source this session. An app should present those as defaults the user can override, not as Nepali law.</p>
+<hr />
+<h2 id="nepqa-2025-governs-the-boxes-not-the-wiring-between-them">NEPQA-2025 governs the boxes, not the wiring between them</h2>
+<p>NEPQA-2025 is AEPC's sixth revision of the national PV quality standard. It is dated August 2025, was posted on 22 Ashoj 2082 (about 8 October 2025), and fully replaces NEPQA 2015.rev1 (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025, AEPC</a>). The Renewable Energy Test Station (RETS) certifies products against it using <strong>Product Introduction Tests (PIT)</strong> and <strong>Random Sampling Tests (RST)</strong>. The standard has a "Subsidy Scheme" category and a "Non-Subsidy Scheme" category in which any importer <em>may</em> submit products (<a href="https://www.retsnepal.org/downloads/file?id=39">RETS copy of NEPQA-2025</a>). In practice certification is <strong>mandatory for AEPC-subsidised systems and voluntary in open retail</strong>. That is a reading of the text; no law was found making it compulsory for imports. Module, battery, inverter and large-controller certificates must come from a CBTL, RETL, NCB or RECB lab listed on the IECEE or IECRE website with the right scope (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</p>
+<p><strong>Amendment-1</strong> (30 Chaitra 2082, April 2026) changes only the grid-tied inverter clause. It makes IEC 62891 (MPPT efficiency) <strong>voluntary</strong>, adds <strong>IEC 61683</strong> (efficiency measurement) and <strong>IEC 61000</strong> (EMC), and requires the importer–manufacturer agreement to state <strong>after-sales service</strong> as well as the warranty (<a href="https://www.aepc.gov.np/docs/2030/NEPQA%202025%20Amendment-1.pdf">NEPQA-2025 Amendment-1</a>). RETS posted an implementation notice in May 2026, but it was published as an image and could not be read, so <strong>the transition period for stock certified under NEPQA 2015 is unknown</strong> (<a href="https://retsnepal.org/news/about-nepal-photovoltaic-quality-nepqa-2025-standard-implementation">RETS notice</a>). No public, searchable register of certified models was found. Buyers have to ask the seller for the RETS report for the exact model, or contact RETS (+977-01-5921143; rets@mail.com.np). AEPC does publish lists of "competent companies" (prequalified installers), most recently in April 2026 (<a href="https://www.aepc.gov.np/sections/competent-companies">AEPC competent companies</a>).</p>
+<p>The biggest structural gap matters for app design. A full-text search of NEPQA-2025 found <strong>no clauses on DC cable, breakers, isolators, SPDs, earthing, mounting structures or installation quality</strong> (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). The most detailed Nepali installation rules are in AEPC tender templates, especially the Institutional Solar PV System 2 kWp bidding document, which specifies earthing, lightning protection, SPDs, technical-room layout and handover tools (<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS 2 kWp template</a>). That template is the best available Nepali reference for "good workmanship" even on private systems. It in turn points to NBC 207:2003 (electrical design for public buildings), which the research team could not obtain.</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>NEPQA-2025 headline requirement</th>
+<th>Minimum warranty</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PV module &gt;350 Wp</td>
+<td>IEC 61215:2021, IEC 61730:2016, IEC 62804-1 (PID), IEC 61701, IEC 62716; ≥21% efficiency; tolerance 0/+3%; serial laminated inside glass</td>
+<td>10 yr product; ≥97% yr 1, ≥90% at 10 yr, ≥80% at 25 yr</td>
+</tr>
+<tr>
+<td>Grid-tied inverter</td>
+<td>IEC 61727, IEC 62116, IEC 62109-1/-2 (+61683, 61000 per Amendment-1; 62891 now voluntary); ≥95% (≤5 kVA) / ≥97% (&gt;5 kVA); IP65; built-in meter and logger</td>
+<td>5 yr</td>
+</tr>
+<tr>
+<td>Battery / hybrid inverter</td>
+<td>Declaration of compliance (IEC 62109-1 cert for bidirectional &gt;5 kVA); THD &lt;5%; IP21; 150% for 2 s; solar-charging priority</td>
+<td>3 yr (≤5 kVA), 5 yr (&gt;5 kVA)</td>
+</tr>
+<tr>
+<td>Charge controller</td>
+<td>PWM only &lt;20 A; PWM ≥90%, MPPT ≥95%; no relays; IP20; IEC 62109-1 cert above 3 kW</td>
+<td>3 yr (≤60 A), 5 yr (&gt;60 A)</td>
+</tr>
+<tr>
+<td>Lithium battery</td>
+<td>IEC 62619:2022; BMS mandatory; ≥3,000 cycles at 80% DoD; capacity 0 to +20%</td>
+<td>5 yr</td>
+</tr>
+<tr>
+<td>Lead-acid battery</td>
+<td>Deep-cycle tubular only; IEC 61427; ≥1,200 cycles (12 V); level indicator if flooded</td>
+<td>3 yr (12 V), 5 yr (2 V tubular)</td>
+</tr>
+<tr>
+<td>Cables, breakers, SPD, earthing, mounting</td>
+<td><strong>Not covered</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sources: <a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>; <a href="https://www.aepc.gov.np/docs/2030/NEPQA%202025%20Amendment-1.pdf">Amendment-1</a>.</p>
+<hr />
+<h2 id="panels-and-mounting-topcon-on-hdg-or-aluminium-is-the-2026-baseline">Panels and mounting: TOPCon on HDG or aluminium is the 2026 baseline</h2>
+<h3 id="pv-modules">PV modules</h3>
+<p><strong>What it does and which type.</strong> Modules convert sunlight into DC electricity. In 2025-26 the mainstream product is the <strong>n-type TOPCon, half-cut, multi-busbar module of about 550-620 W</strong>. Mono-PERC is the older and cheaper p-type option. HJT and back-contact modules cost more and have the best temperature behaviour. Reported Pmax temperature coefficients are about <strong>−0.34 to −0.39 %/°C for PERC, −0.28 to −0.32 for TOPCon and −0.24 to −0.27 for HJT</strong>. Typical annual degradation is about 0.5-0.55% for PERC, 0.4% for TOPCon and 0.25-0.30% for HJT, though HJT is flagged as moisture-sensitive in humid monsoon conditions (<a href="https://www.surgepv.com/blog/perc-vs-topcon-vs-hjt-field-performance">SurgePV field comparison</a>; <a href="https://a1solarstore.com/blog/solar-panel-cell-technology-explained-perc-topcon-hjt-and-what-they-mean-for-you.html">A1 Solar Store</a>). Risen Energy sells HJT, so its model is not neutral. It estimates 25-year hot-climate losses of <strong>12.86% for PERC, 10.6% for TOPCon and 7.87% for HJT</strong> (<a href="https://www.pv-magazine.com/press-releases/risen-energy-global-power-generation-gains-comparison-map-and-technical-analysis-of-different-cell-technologies/">pv magazine/Risen</a>). NEPQA's <strong>21% efficiency floor above 350 Wp</strong> effectively rules out polycrystalline and older mono modules at those sizes (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). Nepali shops still sell poly only at 100 W (<a href="https://pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>).</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Pros</th>
+<th>Cons</th>
+<th>Best fit in Nepal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mono-PERC (p-type)</td>
+<td>Cheapest, widely stocked</td>
+<td>Higher temp. loss and degradation, LID/LeTID (general practice)</td>
+<td>Budget off-grid, cool hill sites</td>
+</tr>
+<tr>
+<td><strong>TOPCon (n-type)</strong></td>
+<td>Lower temp. coefficient and degradation, mainstream supply</td>
+<td>Slightly higher price per W</td>
+<td><strong>Default everywhere</strong>, especially the Terai</td>
+</tr>
+<tr>
+<td>HJT</td>
+<td>Best temp. coefficient, low degradation</td>
+<td>Costlier, moisture-sensitive</td>
+<td>Hot Terai roofs where budget allows</td>
+</tr>
+<tr>
+<td>Back-contact</td>
+<td>Highest efficiency, good under shade (general practice)</td>
+<td>Low bifaciality, field record unverified</td>
+<td>Small or shaded roofs</td>
+</tr>
+<tr>
+<td>Bifacial glass-glass</td>
+<td>5-15% rear gain over bright ground (general practice)</td>
+<td>Little gain flush on tin roofs, heavier</td>
+<td>Elevated or ground mounts over light surfaces</td>
+</tr>
+<tr>
+<td>Polycrystalline</td>
+<td>Cheap small panels</td>
+<td>Below the NEPQA floor &gt;350 Wp; obsolete</td>
+<td>Avoid except tiny 12 V kits</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Climate fit.</strong> In the <strong>Terai</strong>, summer module temperatures reach 60-70 °C, so the temperature coefficient and PID resistance matter most. LONGi notes that PID is most likely in hot, humid, high-voltage conditions (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi User Manual 2026</a>). In the <strong>high hills and mountains</strong>, the risks are mechanical and electrical. LONGi warns that <strong>low temperature raises module voltage, and snow or other reflective surfaces raise current and power</strong> (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>). That makes cold-Voc string sizing and snow-load rating the deciding checks there.</p>
+<p><strong>NEPQA-2025 and datasheet checks.</strong> A compliant module carries:</p>
+<ul>
+<li>IEC 61215-2:2021 and IEC 61730-1/-2:2016 certificates from an IECEE/IECRE-listed lab.</li>
+<li>Above 350 Wp, IEC 62804-1 PID, IEC 61701 salt-mist and IEC 62716 ammonia certificates.</li>
+<li><strong>Positive-only power tolerance</strong> (0 to +3% above 200 Wp).</li>
+<li>Fill factor ≥75% above 150 Wp, and Vmp ≥17.5 V for 12 V-system modules.</li>
+<li>Bypass diodes, an IP65 junction box, and IEC 62852 IP67 connectors supplied or approved by the module maker.</li>
+<li>A serial number <strong>laminated inside the glass</strong>.</li>
+<li>An indelible rear nameplate showing Wp, maker, model, Vmp, Imp, Voc, Isc and maximum system voltage.</li>
+<li>A warranty letter on the manufacturer's letterhead (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</li>
+</ul>
+<p>On the datasheet, an app should also capture:</p>
+<ul>
+<li>the temperature coefficients of Pmax, Voc and Isc;</li>
+<li>NMOT/NOCT;</li>
+<li>maximum system voltage (1000 or 1500 V);</li>
+<li><strong>maximum series fuse rating</strong>;</li>
+<li>front and rear mechanical test loads for each clamping method;</li>
+<li>weight, frame and glass thickness, and connector model.</li>
+</ul>
+<p>LONGi states that datasheet mechanical loads are <strong>test loads</strong>, and that <strong>design load = test load ÷ 1.5</strong>. So "5400/2400 Pa" means about 3600 Pa down and 1600 Pa uplift in design (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>).</p>
+<p><strong>Counterfeit and B-grade signs.</strong> The best defences are:</p>
+<ul>
+<li>a laminated serial verified with the manufacturer;</li>
+<li>a certificate checked directly on the IECEE or certifier database, since TÜV publishes notices about misuse of its mark (<a href="https://www.tuv.com/content-media-files/usa/about-us/important-notices/t%C3%BCv-rheinland-unauthorized-use-of-test-mark-3.pdf">TÜV notice</a>);</li>
+<li>per-panel I-V curve images rather than an Excel flash list.</li>
+</ul>
+<p>Flash lists can be edited, and good EL images can be duplicated across serials (<a href="https://sinovoltaics.com/quality-control/sneaky-pv-quality-frauds-part-1/">Sinovoltaics</a>). Fakes often have missing, duplicated or sticker-only serials. One counterfeit case even involved laminated serials, which shows factory complicity is possible (<a href="https://www.pv-magazine.com/press-releases/counterfeit-panels_100015587/">pv magazine</a>; <a href="https://pv-magazine-usa.com/2020/06/22/pirates-of-the-pv-industry/">pv magazine USA</a>). Regional analogues show what is at stake: counterfeit "300 W" panels in Africa measured 160-200 W (<a href="https://sun-connect.org/counterfeit-and-low-grade-solar-panels-hamper-pv-rollout-in-africa-2/">sun-connect</a>). No Nepal-specific counterfeit reports were found.</p>
+<p><em>General practice</em> adds several site checks: weigh panels against the datasheet, look for snail trails, cracks and backsheet bubbles, measure Voc and Isc on site, and insist on an invoice listing serials.</p>
+<p><strong>Handling, installation, maintenance and life.</strong> LONGi's 2026 manual gives these rules:</p>
+<ul>
+<li><strong>Handling:</strong> never carry a module by its cables or junction box; never stand on modules; never drill the frame (this voids the warranty).</li>
+<li><strong>Storage:</strong> store dry and ventilated in the original packaging.</li>
+<li><strong>Spacing:</strong> keep ≥10 mm between modules and ≥10 cm between the frame and a parallel roof for ventilation.</li>
+<li><strong>Snow:</strong> in heavy-snow areas, raise the lower edge above the snow line.</li>
+<li><strong>Cleaning:</strong> use only soft water and a sponge, in the early morning or evening, with no detergents or abrasives.</li>
+<li><strong>Inspection:</strong> inspect connectors, cables, junction-box sealant, glass, clamps and grounding <strong>twice a year</strong>.</li>
+<li><strong>Siting:</strong> avoid flood-prone sites. Near livestock sheds, ammonia exposure needs protective measures.</li>
+</ul>
+<p>(<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>)</p>
+<p>Lifespan is anchored by the NEPQA power warranty of <strong>≥80% at 25 years with ≤0.8%/yr loss</strong> (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). A Nepali engineer notes that physical damage such as cracked glass is usually excluded from warranty, and advises keeping spare modules (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>).</p>
+<p><strong>Price.</strong> July 2026 retail prices, including 13% VAT, are shown below (<a href="https://pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>). Buying four or more panels often gets an 8-12% discount.</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Panel</th>
+<th>Price (NPR)</th>
+<th>NPR/Wp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100 W poly</td>
+<td>7,500-8,500</td>
+<td>75-85</td>
+</tr>
+<tr>
+<td>400 W half-cut PERC</td>
+<td>28,000-32,000</td>
+<td>70-80</td>
+</tr>
+<tr>
+<td>550 W TOPCon</td>
+<td>40,000-46,000</td>
+<td>73-84</td>
+</tr>
+<tr>
+<td>600 W+ TOPCon/HJT</td>
+<td>48,000-55,000</td>
+<td>80-92</td>
+</tr>
+</tbody>
+</table></div>
+<p>Global prices rose from about <strong>9 to 11.4 US cents/W between December 2025 and April 2026</strong>, with 15-16 cents expected by the end of 2026, because China cancelled export tax rebates and metal prices rose (<a href="https://ekantipur.com/business/2026/05/24/en/solar-panel-prices-rise-as-raw-materials-become-more-expensive-08-41.html">Ekantipur</a>). The gap between a factory price of about NPR 15-16/Wp and a retail price of NPR 73-92/Wp is large. Users should get at least three quotes.</p>
+<h3 id="mounting-structures-and-racks">Mounting structures and racks</h3>
+<p><strong>Types and materials.</strong> NEPQA-2025 contains <strong>no mounting specification</strong> (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). Nepali packages are sold with either a "basic GI structure" or a "full aluminium" structure (<a href="https://pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>).</p>
+<p>The two durable choices are <strong>hot-dip galvanised (HDG) steel</strong> to ISO 1461 and <strong>anodised aluminium</strong>. Vendors quote typical HDG coatings of 55-150 µm depending on steel thickness, and about 80 µm or more for long life. Check the actual ISO 1461 table (<a href="https://cn.antaisolar.com/company/blog/supporting-blogs/a-technical-guide-to-hot-dip-galvanizing-standards-for-steel-solar-carport-frames">Antai Solar</a>; <a href="https://bridgewaypower.in/blog/solar-mounting-structure-types-price">Bridgeway Power</a>). Coating quality matters: red rust appeared on HDG brackets after 28 months at a coastal site (<a href="https://www.rapid-protos.com/galvanized-steel-vs-aluminum/">Rapid-Protos</a>). Carbon-steel fasteners on aluminium rails without isolation cause galvanic corrosion (<a href="https://kpgreenengineering.com/blog/galvalume-vs-galvanized-vs-aluminium-solar-mounting">KP Green Engineering</a>). LONGi requires the structure to be durable, corrosion- and UV-resistant, and statically checked. It notes corrosion usually starts where the frame meets the bracket (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>).</p>
+<p><em>General practice</em> ranks expected life in a monsoon climate as follows:</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Material</th>
+<th>Expected life</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Anodised aluminium 6063/6005-T5/T6 with SS304 fasteners; HDG ≥80 µm; ZAM/Magnelis</td>
+<td>25+ years</td>
+</tr>
+<tr>
+<td>Pre-galvanised GI pipe</td>
+<td>About 10-15 years</td>
+</tr>
+<tr>
+<td>Painted mild steel</td>
+<td>About 5-10 years, with repainting</td>
+</tr>
+</tbody>
+</table></div>
+<p>Galvanise after welding, never weld after galvanising. Use EPDM or nylon washers between dissimilar metals.</p>
+<p><strong>Roof and ground methods (general practice, verify against the module manual).</strong></p>
+<ul>
+<li><strong>RCC flat roofs:</strong> use chemical or expansion anchors into the slab, with each base plate re-waterproofed, or cast pedestals bonded to the slab top. Ballasted blocks avoid penetrations but add roughly 50-150 kg/m² and can slide in an earthquake. That makes them a weak choice in seismic Nepal without a structural check.</li>
+<li><strong>CGI/tin roofs:</strong> bolt L-feet or hooks into the <strong>purlins</strong>, never just the sheet, with EPDM-washered screws on the crests.</li>
+<li><strong>Ground mounts:</strong> HDG posts on concrete footings.</li>
+<li><strong>Clamps:</strong> use only the manufacturer's clamping zones. Torque is typically about 10-16 N·m for M8 aluminium clamps, but the module's installation manual governs.</li>
+<li><strong>Grounding:</strong> bond every frame through the marked grounding hole. LONGi specifies a 4.2 mm hole, a device that pierces the anodising, and about 12 AWG copper. Do not drill extra holes (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>).</li>
+</ul>
+<p><strong>Wind, seismic, tilt.</strong> The governing codes are <strong>NBC 105:2020</strong> (seismic) and <strong>NBC 104</strong> (wind, reportedly based on IS 875 Part 3) (<a href="https://openjicareport.jica.go.jp/pdf/12293189_02.pdf">JICA report</a>; <a href="https://iisee.kenken.go.jp/worldlist/37_Nepal/Nepal%20NBC%20105%202020.pdf">NBC 105:2020</a>). <strong>The NBC 104 basic wind speed for Nepal could not be verified.</strong> The often-quoted 47 m/s must not be hard-coded. Pre-monsoon storms are a real uplift risk; windstorms killed people and damaged houses across Nepal in May 2025 (<a href="https://www.tribuneindia.com/news/world/windstorm-kills-4-injures-dozens-causes-massive-damages-across-nepal">Tribune India</a>).</p>
+<p>Modules should face south. Grid-tied tilt should maximise annual yield, off-grid tilt should favour the worst season, and steeper tilts shed dust (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>). <em>General practice</em> suggests:</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Tilt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grid-tied Terai roofs</td>
+<td>15-20°</td>
+</tr>
+<tr>
+<td>Kathmandu, hills and off-grid systems</td>
+<td>25-35°</td>
+</tr>
+<tr>
+<td>Snowy high sites</td>
+<td>40-60°</td>
+</tr>
+</tbody>
+</table></div>
+<p>Space rows so there is no shading from 09:00 to 15:00 on the winter solstice.</p>
+<p><strong>Price.</strong> No Nepali per-kWp structure price was found. Installation including structure is quoted at <strong>NPR 15,000-30,000 per kW</strong> (<a href="https://pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>). Indian structure-only benchmarks are shown below; at the 1.6 NPR/INR peg this is about NPR 6,400-12,800 for standard roofs before duty (<a href="https://bridgewaypower.in/blog/solar-structure-cost-per-kw-india">Bridgeway Power cost</a>).</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Structure type (India)</th>
+<th>Price per kW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RCC roof</td>
+<td>₹6,000-8,000</td>
+</tr>
+<tr>
+<td>Tin roof</td>
+<td>₹4,000-5,500</td>
+</tr>
+<tr>
+<td>Elevated</td>
+<td>₹12,000-16,000</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Common mistakes.</strong> Rust at GI welds and cut ends, clamps loosening through thermal cycling, edge uplift, roof leaks at anchors, glass breakage from clamping outside the allowed zone or over-torquing, and aluminium-steel galvanic corrosion (general practice).</p>
+<hr />
+<h2 id="inverters-and-charge-controllers-must-match-the-cold-weather-string-voltage-first">Inverters and charge controllers must match the cold-weather string voltage first</h2>
+<h3 id="inverters-on-grid-hybrid-off-grid-micro">Inverters: on-grid, hybrid, off-grid, micro</h3>
+<p><strong>Function and types.</strong> The inverter converts DC to 230/400 V, 50 Hz AC. The four families behave very differently in Nepal:</p>
+<ul>
+<li><strong>On-grid string inverters</strong> sync to NEA's grid and must <strong>shut down within 1 s of a grid failure</strong>. They therefore give <strong>no backup</strong>, a frequent buyer surprise (<a href="https://policy.asiapacificenergy.org/sites/default/files/Net%20metering%20Guidelines%20-%202018.pdf">NEA Net Metering Guidelines 2018</a>; <a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>).</li>
+<li><strong>Hybrid inverters</strong> have a built-in charge controller, per NEPQA's definition (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). They combine PV MPPT, battery charging and grid tie, with a backup port.</li>
+<li><strong>Off-grid inverter-chargers and "solar PCUs"</strong> run from batteries and cannot export.</li>
+<li><strong>Micro-inverters and DC optimisers</strong> give panel-level MPPT, which helps with shading or several roof faces. They cost more per watt, and their availability in Nepal was not verified (general practice).</li>
+</ul>
+<p>Nepali shelves mix Indian "home UPS" and "hybrid PCU" units (Genus, Luminous, Smarten, Eastman, ULTRA, Tech-fine) with Chinese hybrids such as Deye and Growatt sold through installers. Huawei SUN2000 string inverters are common commercially (<a href="https://www.batterymart.com.np/categories/inverter">Battery Mart</a>; <a href="https://www.megasolarenergy.com.np/products/inverters-batteries">Mega Solar Energy</a>; <a href="https://ecoil.com.np/Blog/solar-inverter-price-in-nepal-complete-guide-2026">Ecoil</a>; <a href="https://www.enfsolar.com/deye-inverter">ENF Solar Deye</a>).</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Best for</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>On-grid string</td>
+<td>Daytime-load homes and businesses with reliable grid</td>
+<td>Cheapest per kW, ≥95-97% efficient, IP65 outdoors</td>
+<td>No backup; depends on NEA approval</td>
+</tr>
+<tr>
+<td><strong>LV hybrid (48 V battery)</strong></td>
+<td><strong>Most Nepali homes wanting backup</strong></td>
+<td>Wide LFP choice, safe DC voltage, can export</td>
+<td>High battery currents (100-250 A) need heavy cable and fusing</td>
+</tr>
+<tr>
+<td>HV hybrid (150-600 V battery)</td>
+<td>Larger premium systems</td>
+<td>Thin cables, slightly higher efficiency</td>
+<td>Brand-locked battery, costly, hard to service locally</td>
+</tr>
+<tr>
+<td>Off-grid inverter-charger / PCU</td>
+<td>Rural, unelectrified or long-outage sites</td>
+<td>Simple, generator-friendly</td>
+<td>No export; cheap units often PWM with low PV-voltage limits</td>
+</tr>
+<tr>
+<td>Micro-inverter / optimiser</td>
+<td>Shaded, multi-orientation roofs</td>
+<td>Panel-level MPPT, low DC voltage (micro)</td>
+<td>Higher cost, rooftop electronics, limited local supply</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pros and cons beyond the cited facts are general practice.</p>
+<p><strong>NEPQA-2025 requirements.</strong></p>
+<p><em>Grid-tied inverters</em> must:</p>
+<ul>
+<li>hold IEC 61727, <strong>IEC 62116 anti-islanding</strong> and IEC 62109-1/-2 certificates, with IEC 62891 voluntary since Amendment-1, and IEC 61683 and 61000 now added;</li>
+<li>reach <strong>≥95% efficiency (≤5 kVA) or ≥97% (&gt;5 kVA)</strong> for transformerless units, with Euro efficiency ≥94%/96%;</li>
+<li>have THD &lt;5% and PF &gt;0.99, adjustable from 0.8 leading to 0.8 lagging;</li>
+<li>be <strong>IP65</strong>;</li>
+<li>include a <strong>built-in meter and data logger</strong>;</li>
+<li>protect against reverse polarity, grid faults and lightning on the feeder;</li>
+<li>carry a <strong>5-year warranty</strong>;</li>
+<li>show the maximum DC input voltage and MPPT range on the label.</li>
+</ul>
+<p>The importer must hold a signed warranty agreement with the manufacturer (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>; <a href="https://www.aepc.gov.np/docs/2030/NEPQA%202025%20Amendment-1.pdf">Amendment-1</a>).</p>
+<p><em>Battery inverters</em> (off-grid, hybrid, bidirectional) are held to a lower bar:</p>
+<ul>
+<li>full-load efficiency ≥90% (transformerless) or ≥85% (transformer);</li>
+<li>THD &lt;5%, which in practice means <strong>pure sine wave</strong>;</li>
+<li><strong>IP21</strong>, so indoors only;</li>
+<li>noise ≤60 dB at 2 m;</li>
+<li><strong>150% of rating for 2 s</strong>;</li>
+<li><strong>solar-charging priority</strong> for hybrids;</li>
+<li>low-battery shutdown no lower than 10.5 V per 12 V block;</li>
+<li>reverse-polarity and output short-circuit protection;</li>
+<li>a 3-year warranty (≤5 kVA) or 5-year warranty (&gt;5 kVA).</li>
+</ul>
+<p>Hybrids and stand-alone units need only a manufacturer declaration, and bidirectional units need an IEC 62109-1 certificate above 5 kVA. The <strong>3-5 kVA band is not addressed</strong>, which is a drafting gap (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</p>
+<p><strong>Selection rules.</strong></p>
+<ol>
+<li><strong>Voltage.</strong> The string's cold-corrected Voc must stay below the inverter's maximum DC input. Its hot Vmp must stay inside the MPPT window. A Deye SUN-5K-SG03LP1, for example, has an MPPT range of 150-425 V, a maximum input of 500 V, and 13 A per MPPT with a 17 A Isc (<a href="https://www.deyeinverter.com/deyeinverter/2024/02/04/datasheet_sun-3-6k-sg03lp1-au_240203_au.pdf">Deye datasheet</a>; <a href="https://www.deyeinverter.com/deyeinverter/2024/04/10/%E5%82%A8%E8%83%BD%E5%8D%95%E7%9B%B8-sun-3-6k-sg03lp1-eu-1.pdf">Deye EU datasheet</a>). Panel Isc must not exceed the MPPT's Isc rating. Imp above the MPPT current limit only clips slightly (general practice).</li>
+<li><strong>DC/AC ratio.</strong> NREL defines the inverter loading ratio (ILR) and warns that models underestimate clipping at high ILR (<a href="https://docs.nrel.gov/docs/fy24osti/87894.pdf">NREL 87894</a>; <a href="https://docs.nrel.gov/docs/fy22osti/82812.pdf">NREL 82812</a>). One study found minimal clipping at <strong>1.25</strong> and about <strong>16% annual loss at 2.0</strong> (<a href="https://www.researchgate.net/publication/303635729_Impact_of_inverter_loading_ratio_on_solar_photovoltaic_system_performance">ResearchGate ILR study</a>). A Nepali practitioner recommends <strong>1.1-1.4</strong> (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>). Use the low end at cool, bright mountain sites, where clipping is higher.</li>
+<li><strong>Load and surge.</strong> <em>General practice</em>: continuous rating ≥1.25 × simultaneous running load. Surge rating must cover the largest motor start, since pumps, fridge compressors and non-inverter ACs draw 3-7 × running current. NEPQA's minimum is 150% for 2 s, while Deye-type LV hybrids claim 2 × for 10 s (<a href="https://www.deyeinverter.com/deyeinverter/2024/04/10/%E5%82%A8%E8%83%BD%E5%8D%95%E7%9B%B8-sun-3-6k-sg03lp1-eu-1.pdf">Deye EU</a>).</li>
+<li><strong>Phase.</strong> NEA's 2018 board decision puts <strong>≤5 kW on 230 V single-phase, 5-40 kW on 400 V three-phase, and &gt;40 kW on 11 kV</strong> (<a href="https://energypedia.info/images/4/43/Purchase_of_Electricity_from_Soalr_PV_System._Unofficial_English_Translation.pdf">NEA 776th Board</a>).</li>
+<li><strong>Waveform and topology.</strong> Buy only pure sine. Low-frequency transformer units are heavy and robust on surge but less efficient. Transformerless units are efficient but need correct RCD selection (general practice).</li>
+</ol>
+<p><strong>Commissioning settings (general practice).</strong></p>
+<ul>
+<li><strong>Grid profile:</strong> Nepal is rarely a preset. Installers pick an IEC 61727 or 50 Hz general profile and must confirm NEA trip limits, which could not be sourced.</li>
+<li><strong>Battery:</strong> type and BMS protocol.</li>
+<li><strong>Charge and discharge:</strong> current limits, SOC cut-offs and grid-charge windows.</li>
+<li><strong>Work mode:</strong> self-use, backup priority or zero export.</li>
+<li><strong>Export limit:</strong> set one if there is no NEA agreement.</li>
+<li><strong>Generator:</strong> parameters and "charge only" behaviour.</li>
+<li><strong>Datalogger:</strong> Wi-Fi or 4G setup.</li>
+</ul>
+<p>NEA's 2018 guideline requires active anti-islanding, disconnection within 1 s, and an anti-islanding demonstration at commissioning (<a href="https://policy.asiapacificenergy.org/sites/default/files/Net%20metering%20Guidelines%20-%202018.pdf">NEA 2018</a>). Whether a newer grid code supersedes it is unknown.</p>
+<p><strong>Installation, mistakes, fakes, maintenance, life (general practice unless cited).</strong></p>
+<ul>
+<li><strong>Mounting:</strong> mount IP65 grid inverters outdoors in shade and IP21 battery inverters indoors and dry. Keep 30-50 cm clearance. Expect derating above about 40-45 °C, which matters on Terai roofs.</li>
+<li><strong>Typical failures:</strong> over-voltage from cold Voc; lightning damage where SPDs and earthing are missing; fan and capacitor failure from heat and dust; BMS protocol errors; insulation (Riso) faults from monsoon-damaged DC cable; undersized AC breakers.</li>
+<li><strong>Rebadging:</strong> generic OEM units (Voltronic/Axpert, Must and similar) are rebadged with inflated ratings. Verify the serial on the brand portal and the IECEE CB certificate, demand the importer agreement NEPQA requires, and weigh claimed transformer units.</li>
+<li><strong>Lifespan:</strong> budget <strong>inverter replacement around years 10-12, at about 10% of capital cost</strong> (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>).</li>
+<li><strong>Maintenance:</strong> clean the fins and filters and check the logger alarms.</li>
+</ul>
+<p><strong>Price (2026, indicative).</strong> Overall, generic hybrids cost about NPR 15,000-26,000/kVA. No verified NPR list prices were found for Deye, Growatt, Huawei, Sungrow, SMA, Fronius or Victron; they are quoted through installers.</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Product</th>
+<th>Price (NPR)</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 kW pure-sine "solar inverter"</td>
+<td>15,000-24,000</td>
+<td><a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a></td>
+</tr>
+<tr>
+<td>3 kW MPPT hybrid</td>
+<td>45,000-65,000</td>
+<td><a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a></td>
+</tr>
+<tr>
+<td>5 kW on-grid string</td>
+<td>75,000-105,000</td>
+<td><a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a></td>
+</tr>
+<tr>
+<td>3-5 kW residential (type unspecified)</td>
+<td>80,000-150,000</td>
+<td><a href="https://ecoil.com.np/Blog/solar-inverter-price-in-nepal-complete-guide-2026">Ecoil</a></td>
+</tr>
+<tr>
+<td>10-25 kW commercial</td>
+<td>250,000-700,000</td>
+<td><a href="https://ecoil.com.np/Blog/solar-inverter-price-in-nepal-complete-guide-2026">Ecoil</a></td>
+</tr>
+<tr>
+<td>Genus 5 kVA hybrid PCU (sale)</td>
+<td>98,999</td>
+<td><a href="https://www.batterymart.com.np/categories/inverter">Battery Mart</a></td>
+</tr>
+<tr>
+<td>Genus 10 kVA hybrid PCU (sale)</td>
+<td>215,000</td>
+<td><a href="https://www.batterymart.com.np/categories/inverter">Battery Mart</a></td>
+</tr>
+<tr>
+<td>Tech-fine 3 kVA-48 V hybrid</td>
+<td>77,945</td>
+<td><a href="https://www.megasolarenergy.com.np/products/inverters-batteries">Mega Solar</a></td>
+</tr>
+<tr>
+<td>5 kVA hybrid</td>
+<td>149,000</td>
+<td><a href="http://www.energynp.com/prod/11-Inverter-Solar-Inverter-3KW-5KW-Nepal-Kathmandu.asp">energyNP</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Many cheap Indian-style PCUs are low-frequency units with PWM or small MPPT chargers and low PV-voltage limits. Check the datasheet for "MPPT" and the maximum PV Voc before buying (general practice).</p>
+<h3 id="charge-controllers-pwm-vs-mppt">Charge controllers: PWM vs MPPT</h3>
+<p><strong>Function and rules.</strong> A charge controller regulates PV current into the battery and protects it from over-charge. NEPQA allows <strong>PWM only below 20 A</strong> (12/24/48 V). It requires efficiency of <strong>≥90% for PWM and ≥95% for MPPT</strong>, no electromechanical relays, IP20 or better, reverse-polarity protection on both the PV and battery sides, load short-circuit protection and <strong>PV-side surge protection</strong>.</p>
+<p>Voltage set-points are:</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Battery</th>
+<th>Set-point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lead-acid LVD</td>
+<td>≥11.4 V per 12 V</td>
+</tr>
+<tr>
+<td>Lead-acid LVR</td>
+<td>≥12.5 V per 12 V</td>
+</tr>
+<tr>
+<td>Flooded HVD</td>
+<td>Below 15 V per 12 V</td>
+</tr>
+<tr>
+<td>VRLA HVD</td>
+<td>14-14.1 V per 12 V</td>
+</tr>
+<tr>
+<td>LiFePO4 HVD</td>
+<td><strong>3.6 V/cell</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>For lithium, deep-discharge protection is left to the BMS. Controllers above 3 kW need an IEC 62109-1 certificate. Warranty is 3 years up to 60 A and 5 years above. The MPPT label must show the voltage range and maximum wattage (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</p>
+<p><strong>Which is best.</strong> <em>General practice</em>: PWM ties the panel to battery voltage, wasting about 20-30% of the power of a 36-cell "12 V" panel. It cannot use modern 108/144-cell panels (Vmp 31-42 V) efficiently. It is acceptable only for small 12 V kits of up to about 300 W. MPPT converts surplus voltage into current and gains roughly 10-30%, most in cold weather and with modern high-Vmp panels. That suits hilly Nepal. <strong>MPPT is the default for anything above a lighting kit.</strong></p>
+<p><strong>Sizing order.</strong></p>
+<ol>
+<li><strong>Voltage first.</strong> Cold-corrected array Voc must stay below the controller's maximum PV voltage. Victron calls this a hard limit, warns that cold arrays exceed rated Voc, and community experts suggest keeping a ~5% margin (<a href="https://www.victronenergy.com/media/pg/Inverter_RS_Smart_Solar/en/mppt-rs-troubleshooting.html">Victron MPPT RS troubleshooting</a>; <a href="https://community.victronenergy.com/t/mppt-controller-size/50940">Victron Community</a>). Over-voltage voids the warranty (<a href="https://diysolarforum.com/threads/overvoltage-on-victron-mppts.102937/">DIY Solar Forum</a>).</li>
+<li><strong>Current.</strong> <em>General practice</em>: output A ≥ array Wp ÷ battery V × 1.25. For example, 1,200 Wp on 24 V gives 62.5 A, so choose a 70 A controller. Check array Isc against the input limit. Over-paneling on watts is common practice because the controller current-limits (<a href="https://www.victronenergy.com/blog/2014/03/28/matching-victron-energy-solar-modules-to-the-new-mppt-charge-regulators/">Victron blog</a>).</li>
+</ol>
+<p><strong>Common mistakes (general practice).</strong></p>
+<ul>
+<li>Connecting PV before the battery, which confuses auto-detect.</li>
+<li>Choosing the wrong battery profile.</li>
+<li>Using lead-acid temperature compensation on lithium.</li>
+<li>Running an inverter from the controller's small load terminal instead of the battery via a fuse.</li>
+<li>Installing no SPD.</li>
+<li>Mounting in a hot box.</li>
+<li>Buying fake "MPPT" units that are really PWM: suspiciously light and cheap.</li>
+</ul>
+<p><strong>Price.</strong> 20 A PWM controllers cost NPR 1,800-3,600 (<a href="https://www.megasolarenergy.com.np/products/inverters-batteries">Mega Solar</a>). No verified NPR MPPT prices were found.</p>
+<h3 id="monitoring">Monitoring</h3>
+<p>NEPQA requires grid-connected inverters to have a <strong>built-in meter and data logger viewable through an external interface</strong>. Battery inverters need only status indicators (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). In practice this is the brand's Wi-Fi, 4G or LAN stick and cloud app, such as Solarman for Deye, ShinePhone for Growatt, FusionSolar for Huawei or VRM for Victron. Some loggers work only on 2.4 GHz Wi-Fi. Use an Ncell/NTC 4G SIM at remote sites (general practice).</p>
+<p>A <strong>CT clamp or Modbus meter on the grid incomer</strong> is what enables self-consumption mode and <strong>zero-export limiting</strong>. Zero export matters while an NEA agreement is pending. Reversed CT direction is the most common commissioning fault (general practice).</p>
+<p>The app should track:</p>
+<ul>
+<li>specific yield in kWh/kWp/day;</li>
+<li>per-MPPT voltage and current;</li>
+<li>inverter temperature;</li>
+<li>battery SOC, cell spread and cycles;</li>
+<li>grid events and import/export;</li>
+<li>Riso.</li>
+</ul>
+<p>Alarms worth enabling are grid over/under-voltage (common on weak rural feeders), earth fault, PV over-voltage, BMS communication loss, low SOC, over-temperature and logger offline (general practice). No NEA rule on CTs, export meters or zero-export acceptance was found.</p>
+<hr />
+<h2 id="lifepo4-costs-about-a-third-as-much-per-lifetime-kwh-as-tubular-lead-acid">LiFePO4 costs about a third as much per lifetime kWh as tubular lead-acid</h2>
+<p><strong>Function and chemistries.</strong> Batteries store PV energy for night use and outages. NEPQA-2025 accepts only <strong>deep-cycle flooded/vented tubular lead-acid, VRLA tubular, and lithium-ion</strong>, and lets AEPC test "new innovations" such as sodium-ion against the maker's claims (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</p>
+<p><strong>LiFePO4 (LFP).</strong> A Pylontech US5000 (48 V, 4.8 kWh) shows the typical spec (<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech US5000 manual 2024</a>):</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>US5000 value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Usable energy / DoD</td>
+<td>4,560 Wh at 95% DoD</td>
+</tr>
+<tr>
+<td>Cycle life</td>
+<td>&gt;8,000 cycles at 25 °C</td>
+</tr>
+<tr>
+<td>Design life</td>
+<td>15+ years</td>
+</tr>
+<tr>
+<td>Weight</td>
+<td>39.7 kg</td>
+</tr>
+<tr>
+<td>Current</td>
+<td>80 A recommended, 100 A maximum continuous</td>
+</tr>
+<tr>
+<td>Charge temperature</td>
+<td><strong>0-50 °C</strong></td>
+</tr>
+<tr>
+<td>Discharge temperature</td>
+<td>−10 to 50 °C</td>
+</tr>
+<tr>
+<td>Altitude</td>
+<td>≤4,000 m</td>
+</tr>
+<tr>
+<td>Enclosure</td>
+<td>IP20, indoor only</td>
+</tr>
+</tbody>
+</table></div>
+<p>Victron's LFP data is more conservative: <strong>2,500 cycles at 80% DoD and 5,000 at 50%</strong>, 92% round-trip efficiency, and charging only at +5 °C or above (<a href="https://victronenergy.com/media/pg/Lithium_NG_battery_25,6_V/en/technical-data.html">Victron Lithium NG</a>). Charging lithium below freezing plates lithium metal and <strong>permanently</strong> degrades performance and safety, even if the pack seems to charge normally (<a href="https://batteryuniversity.com/article/bu-410-charging-at-high-and-low-temperatures">Battery University BU-410</a>).</p>
+<p><strong>Lead-acid.</strong> NEPQA's minimum cycle lives at 80% DoD are below. They also give a usable quality ranking (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Minimum cycles at 80% DoD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Li-ion</td>
+<td><strong>3,000</strong> (2,000 for packs under 2 kWh)</td>
+</tr>
+<tr>
+<td>2 V flooded / gel tubular</td>
+<td>1,500</td>
+</tr>
+<tr>
+<td>12 V flooded / VRLA</td>
+<td><strong>1,200</strong></td>
+</tr>
+<tr>
+<td>2 V AGM</td>
+<td>800</td>
+</tr>
+</tbody>
+</table></div>
+<p>Lead-acid charges across −20 to 50 °C. A discharged battery freezes at −15 °C, while a full one survives to −55 °C (<a href="https://batteryuniversity.com/article/bu-410-charging-at-high-and-low-temperatures">BU-410</a>). Flooded cells need distilled-water top-ups and ventilation for hydrogen. Sulfation sets in if they sit partly charged (<a href="https://batteryuniversity.com/article/bu-403-charging-lead-acid">BU-403</a>). Heat is the Terai's enemy: <strong>VRLA life roughly halves per 8.3 °C rise and flooded life per 10 °C</strong>, and time spent hot is not offset by time spent cold (<a href="https://mathscinotes.com/wp-content/uploads/2013/03/BatteryLifePrediction.pdf">battery life prediction PDF</a>; <a href="https://valen.com.au/battery-design-life-vs-actual-service-life-what-you-need-to-know/">Valen</a>).</p>
+<p><strong>Sodium-ion.</strong> It stores about 100-175 Wh/kg against 165-205 Wh/kg for LFP. Its cost advantage is unproven while LFP cells sit near $60/kWh, and parity is expected only in 2-3 years (<a href="https://source.benchmarkminerals.com/article/how-do-sodium-ion-batteries-compare-to-lfp">Benchmark Minerals</a>; <a href="https://www.energy-storage.news/sodium-ion-will-reach-lcos-parity-with-lfp-in-two-to-three-years-bess-firm-says/">Energy-Storage.news</a>). It is not yet a mainstream choice in Nepal.</p>
+<p><strong>NMC</strong> has no stationary-storage case in the notes. NEPQA's set-points mention only LFP and LiCoO2, so the app should not recommend NMC for home storage.</p>
+<p><strong>Which is best where.</strong> The research team calculated cost per lifetime kWh from the Nepali prices below, under these assumptions:</p>
+<ul>
+<li><strong>LFP:</strong> NPR 140,000-190,000 for 4.8 kWh, used at 90% DoD for 6,000 cycles, comes to about <strong>NPR 5.4-7.3 per delivered kWh</strong>. At the NEPQA floor of 3,000 cycles it is NPR 12-16.5.</li>
+<li><strong>Tubular lead-acid:</strong> 12 V 150 Ah at 50% DoD for an assumed 1,500 cycles comes to about <strong>NPR 18-25/kWh</strong>, roughly doubling in Terai heat.</li>
+</ul>
+<p>On that basis:</p>
+<ul>
+<li><strong>LFP for any daily cycling</strong>: off-grid systems and hybrid self-consumption.</li>
+<li><strong>Tubular lead-acid only for rarely-used outage backup that sits on float</strong>, or where cold charging is unavoidable.</li>
+<li><strong>LFP kept indoors above 0-5 °C</strong> (or a self-heating model) at high-altitude sites.</li>
+</ul>
+<p>Many Nepali "inverter batteries" (Invamaster, Bazooka and similar) are designed for backup duty. For solar cycling, choose products sold as "solar tubular" with IEC 61427 certificates (general practice).</p>
+<p><strong>BMS, communications, LV vs HV.</strong> NEPQA <strong>mandates a cell-level BMS</strong> for Li-ion, covering voltage, current and temperature, thermal runaway, over-charge and over-discharge (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). Pylontech's BMS talks to the inverter over CAN or RS485 on RJ45. CAN-H is pin 4, CAN-L pin 5 and GND pin 6. DIP switches set baud rate and termination, and the module with the empty link port is the master (<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech manual</a>).</p>
+<p><strong>Closed-loop</strong> operation, where the BMS sends charge limits to the inverter, is preferred. With it, Victron reports parameters are set automatically (<a href="https://www.victronenergy.com/live/battery_compatibility:pylontech_phantom">Victron–Pylontech</a>). Open-loop, voltage-only control misjudges SOC on LFP's flat voltage curve (general practice). Rack modules suit systems that will grow, while wall-mount 51.2 V 100 Ah units save floor space and are sold in Kathmandu (<a href="http://www.energynp.com/prod/4-Lithium-iron-battery-LiFePO4-Nepal-Kathmandu.asp">energyNP</a>). HV stacks need a matched HV hybrid and are not field-serviceable by laypeople. Home systems of 3-10 kW in Nepal are overwhelmingly 48 V LV.</p>
+<p><strong>Charge settings.</strong></p>
+<p><em>LFP:</em></p>
+<ul>
+<li><strong>Pylontech (15S):</strong> charge 52.5-53.5 V, low-voltage protection near 44.5 V. Victron uses 52.0 V absorption and 51.0 V float (<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech manual</a>; <a href="https://www.victronenergy.com/live/battery_compatibility:pylontech_phantom">Victron</a>).</li>
+<li><strong>16S (51.2 V) packs without communications:</strong> <em>general practice</em> is absorption 55.2-56.0 V, float 53.6-54.0 V or disabled, and cut-off 47-48 V. That stays under NEPQA's <strong>3.6 V/cell (57.6 V) HVD</strong>. A 15S/16S mix-up over-charges, so always use the specific datasheet.</li>
+</ul>
+<p><em>Lead-acid:</em></p>
+<ul>
+<li>Absorption 2.30-2.45 V/cell (13.8-14.7 V per 12 V), float 2.25-2.27 V/cell, with <strong>−3 mV/°C/cell</strong> temperature compensation (<a href="https://batteryuniversity.com/article/bu-403-charging-lead-acid">BU-403</a>). Compensation extends life by up to 15% (<a href="https://batteryuniversity.com/article/bu-410-charging-at-high-and-low-temperatures">BU-410</a>).</li>
+<li>NEPQA floors: LVD ≥11.4 V per 12 V, and inverter cut-off ≥10.5 V per 12 V (≥42 V on a 48 V bank) (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</li>
+</ul>
+<p><strong>Safety, installation and location.</strong> A single 48 V LFP module can deliver <strong>&lt;2,000 A in 1 ms (2,500 A for design)</strong>. Pylontech therefore requires:</p>
+<ul>
+<li>a <strong>DC-rated</strong> disconnect of at least 60 V DC, <strong>never an AC breaker</strong>;</li>
+<li>breaker interrupting capacity <strong>Icu ≥10 kA for 1-4 modules and ≥20 kA for 5-8</strong>;</li>
+<li>one 4 AWG cable pair per 100 A;</li>
+<li>earthing with 6 AWG or larger, below 0.1 Ω.</li>
+</ul>
+<p>(<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech manual</a>) Install indoors at a stable 0-50 °C, away from water and fire. If cells burn, cut power and flood with water. If only the cabling burns, use dry powder or CO2. AEPC's institutional template requires a locked, ventilated technical room, <strong>≥0.5 m between the battery bank and the inverter or controller</strong>, hydrogen ventilation for flooded cells, and warning stickers (<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template</a>). Do not place batteries on hot rooftops or in tin sheds in the Terai, and keep them off the floor in flood zones (general practice).</p>
+<p><strong>Acceptance testing and fake signs.</strong> NEPQA allows capacity of <strong>0 to +20% of rating, never less</strong>. It also requires a printed or engraved serial, IEC certificates from listed labs, and a label giving Ah at a stated discharge rate. AEPC-subsidised bids require RETS PIT and RST certificates (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>; <a href="https://www.aepc.gov.np/docs/1771/8_Bid%20Document%202kWp%20(Updated%20with%20T&amp;C%20Form).pdf">AEPC bid document</a>). Naming the cell maker (e.g., EVE) is a transparency signal worth asking for (<a href="http://www.energynp.com/prod/4-Lithium-iron-battery-LiFePO4-Nepal-Kathmandu.asp">energyNP</a>).</p>
+<p><em>General practice</em> red flags:</p>
+<ul>
+<li>a "5 kWh" pack under NPR 100,000;</li>
+<li>weight well below 8-10 kg/kWh;</li>
+<li>no cell brand stated, or laser-scraped cells;</li>
+<li>no communication port;</li>
+<li>light "100 Ah" lead-acid blocks;</li>
+<li>no IEC or UN38.3 papers;</li>
+<li>verbal-only warranties.</li>
+</ul>
+<p>A technician can verify capacity with a full charge and a timed discharge, check cell spread on the BMS (about 20-30 mV at rest), and use a hydrometer on flooded cells.</p>
+<p><strong>Maintenance, life, end of life.</strong> LFP needs little maintenance. Charge it every six months in storage, and recharge within 12 hours of a full discharge (<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech</a>). Flooded lead-acid needs regular water checks and recharging every six months in storage (<a href="https://batteryuniversity.com/article/bu-403-charging-lead-acid">BU-403</a>). Disposal is a real Nepali hazard. Used lead batteries are often dismantled informally in the Terai, contributing to an estimated <strong>3,760 lead-pollution deaths a year</strong> (<a href="https://dialogue.earth/en/pollution/south-asias-toxic-battery-recycling-problem-2-2-2/">Dialogue Earth</a>), and Nepal has <strong>no formal lithium recycling plant</strong> (<a href="https://theannapurnaexpress.com/story/61232/">Annapurna Express</a>). Return old batteries to the dealer.</p>
+<p><strong>Prices (2026).</strong></p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Battery</th>
+<th>Price (NPR)</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12 V 150 Ah tubular</td>
+<td>22,000-37,500</td>
+<td><a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>; <a href="https://www.batterymart.com.np/categories/inverter-battery">Battery Mart</a></td>
+</tr>
+<tr>
+<td>12 V 200 Ah tubular</td>
+<td>30,000-51,500 (Exide 200 Ah Solar Tubular NPR 51,499)</td>
+<td>same</td>
+</tr>
+<tr>
+<td>12.8 V 100 Ah LFP</td>
+<td>48,000</td>
+<td><a href="https://www.batterymart.com.np/categories/inverter-battery">Battery Mart</a></td>
+</tr>
+<tr>
+<td>48 V 100 Ah LFP</td>
+<td><strong>140,000-190,000</strong> (about NPR 29,000-40,000/kWh)</td>
+<td><a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a></td>
+</tr>
+<tr>
+<td>51.2 V LFP, one Kathmandu dealer</td>
+<td>250,000-315,000</td>
+<td><a href="http://www.energynp.com/Battery.asp">energyNP</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>The FY 2082/83 budget reportedly cut customs duty on solar and wind storage batteries to <strong>1%</strong> (<a href="https://en.himalpress.com/budget-cuts-taxes-for-it-startups-and-green-energy-hikes-sin-taxes/">Himal Press</a>). Whether lithium packs actually clear at that rate is unverified.</p>
+<hr />
+<h2 id="cables-connectors-and-protection-the-parts-nepqa-ignores-cause-the-fires">Cables, connectors and protection: the parts NEPQA ignores cause the fires</h2>
+<h3 id="dc-and-ac-cables">DC and AC cables</h3>
+<p>Use <strong>EN 50618 H1Z2Z2-K / IEC 62930</strong> PV cable for all module and string wiring. It is rated <strong>1.5 kV DC (1.8 kV maximum)</strong>, has a <strong>120 °C conductor rating</strong>, works from −40 to +90 °C ambient, is UV and ozone tested, and uses tinned fine-strand copper with cross-linked double insulation (<a href="https://products.lappgroup.com/online-catalogue/power-and-control-cables/special-applications/photovoltaic/solar-cable-h1z2z2-k.html">Lapp H1Z2Z2-K</a>; <a href="https://www.offgridtec.com/media/product_attachements/Lapp_Solarkabel_H1Z2Z2-K_1X6_Datasheet.pdf">Lapp datasheet</a>). Not every variant is halogen-free, so check whether low-smoke zero-halogen is wanted (<a href="https://www.nexans.no/en/products/Industry-Cables/Flexible-Power-Cables/Nexans-PV-38188.html">Nexans PV</a>). Nepal has <strong>no cable rule</strong> in NEPQA (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>).</p>
+<p><em>General practice</em> fills the gap:</p>
+<ul>
+<li><strong>Never use PVC house wire on the roof.</strong> It is rated 450/750 V AC and 70 °C and goes brittle in UV.</li>
+<li><strong>String cable:</strong> size it at ≥1.25 × Isc, then derate for 60-70 °C roof heat and bundling. Use 4 mm² for modules up to about 13-15 A and 6 mm² for 15-18.5 A modern modules or long runs.</li>
+<li><strong>Voltage drop:</strong> hold it to 1-3% on PV DC and on AC, and 1-2% on battery cables, using Vd = 2·L·I·ρ/A with ρ ≈ 0.0175-0.0225 Ω·mm²/m.</li>
+<li><strong>Battery cable:</strong> use flexible class 5/6 copper with tinned tube lugs and a hex crimp. A 48 V 5 kW inverter draws about 110-125 A, which needs 25-35 mm² per pole or two 4 AWG pairs per Pylontech's 100 A-per-pair rule.</li>
+<li><strong>Colours:</strong> AC uses brown/black/grey for line, blue for neutral and green-yellow for earth only. DC is usually red + and black −. Older Nepali wiring often used red and black on AC, so never trust colour on existing circuits.</li>
+<li><strong>Routing:</strong> run cables in UV-stabilised conduit off the hot roof, with + and − of a string together to shrink the loop. Use metal conduit where rats are a problem.</li>
+<li><strong>Labelling:</strong> add "solar DC – live in daylight" and dual-supply labels.</li>
+</ul>
+<p>Copper is the default. Aluminium suits only long AC feeders of 16-25 mm² and above, with bimetallic lugs. AEPC requires anti-galvanic measures wherever aluminium meets copper (<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template</a>). No NPR cable price was found. As references, 4 mm² PV cable costs ₹45-55/m in India (Feb 2026) (<a href="https://m.indiamart.com/city/gurgaon/dc-cable.html">IndiaMART</a>).</p>
+<h3 id="connectors-mc4-and-compatibles">Connectors (MC4 and compatibles)</h3>
+<p>NEPQA requires the PV connector to be <strong>supplied or approved by the module manufacturer, IEC 62852-compliant and at least IP67</strong> (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). The documented fire mechanism is <strong>cross-mating</strong>: "MC4-compatible" halves from different makers have different pin tolerances. That raises contact resistance, which leads to heating, arcing and fire. Stäubli, the original MC4 maker (and a commercial party), cites TÜV Rheinland and IEA-PVPS findings on this (<a href="https://staubli.com/at/en/electrical-connectors/industries/renewable-energy/cross-connection.html">Stäubli cross-connection</a>; <a href="https://www.nacleanenergy.com/solar/dangers-of-cross-mating-pv-cable-connectors-aren-t-always-a-match-1">NACE</a>). Even Stäubli's MC4 and MC4-EVO2 are separate products with separate ratings (<a href="https://en.wikipedia.org/wiki/MC4_connector">Wikipedia MC4</a>). Burnt connectors are a routine installer complaint (<a href="https://powerforum.co.za/topic/31511-burnt-mc4-connectors/">PowerForum ZA</a>). LONGi adds that an unmated connector is not waterproof, so keep the caps on (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>).</p>
+<p><em>General practice</em>:</p>
+<ul>
+<li>Match the module's connector brand, or replace both halves.</li>
+<li>Crimp with the maker's tool and die (Stäubli PV-CZM), with a 6-7.5 mm strip length.</li>
+<li>Pull-test every crimp, tighten the gland to the specified torque, and never solder.</li>
+<li>Use Y-branches only for two strings.</li>
+<li>Inspect for a click on mating, no gap between halves, no browning and no strain.</li>
+<li>A thermal camera at full sun is the best field check.</li>
+<li>Unbranded bags of "MC4 1000V 30A" connectors are the classic clone.</li>
+</ul>
+<h3 id="fuses-breakers-isolators-rcds-and-spds">Fuses, breakers, isolators, RCDs and SPDs</h3>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Rule</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>String fuse (gPV, IEC 60269-6)</td>
+<td>Needed when reverse current Isc × (N−1) exceeds the module's maximum series fuse. In practice, <strong>3 or more parallel strings</strong>. LONGi requires OCPD per string above 2 parallel strings</td>
+<td><a href="https://files.sma.de/downloads/StringsicherungenSMC-UEN123621.pdf">SMA string fuses</a>; <a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a></td>
+</tr>
+<tr>
+<td>Fuse rating</td>
+<td>≥1.25 × Isc and ≤ the module's maximum series fuse (IEC 62548 per SurgePV). Sources conflict (VIOX: 1.5-2.4 × Isc; NEC 1.56)</td>
+<td><a href="https://www.surgepv.com/blog/solar-fuse-sizing">SurgePV</a>; <a href="https://viox.com/pv-fuse-disconnect-sizing-guide-nec-156-rule/">VIOX</a></td>
+</tr>
+<tr>
+<td>DC breaker / isolator</td>
+<td><strong>Never an AC MCB on DC</strong>: DC has no current zero to quench the arc. Polarised DC MCBs must be wired as marked; use non-polarised types on bidirectional battery circuits. Isolators to IEC 60947-3 DC-PV1/DC-PV2</td>
+<td><a href="https://viox.com/?p=17688">VIOX polarity</a>; <a href="https://viox.com/why-use-non-polarized-dc-miniature-circuit-breakers-in-pv-storage-systems/">VIOX non-polarised</a>; <a href="https://viox.com/how-to-read-dc-isolator-switch-ratings-voltage-current-poles-and-utilization-categories/">VIOX isolator ratings</a></td>
+</tr>
+<tr>
+<td>Battery fuse</td>
+<td>Class T (about 20 kA interrupt), close to battery +. MRBF falls to 2 kA at 58 V, so it is unsuitable as the main 48 V lithium fuse</td>
+<td><a href="https://www.currentconnected.com/product-tag/battery-fuses">Current Connected</a>; <a href="https://www.bluesea.com/products/category/15/47/Class_T_Fuses">Blue Sea Class T</a></td>
+</tr>
+<tr>
+<td>RCD</td>
+<td>Type B where a transformerless inverter can inject DC fault current above 6 mA. Type A where the inverter maker declares it sufficient</td>
+<td><a href="https://www.kostal-solar-electric.com/fileadmin/downloadcenter/kse/1210_HE-RCD-RCM.pdf">Kostal</a>; <a href="https://library.e.abb.com/public/c52954634aceded9c1257c300040d8db/2CSC427002B0201.pdf">ABB</a>; <a href="https://memodo.de/mwdownloads/0cc755e757a255d8910205d670cb2b75">Sungrow/Memodo</a></td>
+</tr>
+<tr>
+<td>DC SPD</td>
+<td>IEC 61643-31/-32. One SPD near the inverter if the array is less than 10 m away; add a second near the array beyond 10 m. Ucpv above cold Voc. Type 2 (or Type 1+2 with an external LPS)</td>
+<td><a href="https://www.electrical-installation.org/enwiki/SPD_for_photovoltaic_applications">Schneider guide</a>; <a href="https://ekatalog.legrand.ch/data/catalog/documents/Parafoudre_Blitzschutz/Technische%20Anleitung_414155_414185_ENG.pdf">Legrand</a></td>
+</tr>
+<tr>
+<td>AEPC SPD minimum</td>
+<td>Type 2 In ≥5 kA, Imax ≥20 kA (8/20 µs); PV-specific, with status indicator, on DIN rail; earthed to the nearest bonding bar. Example: Ucpv 670 V, Up 2.8 kV, Imax 40 kA</td>
+<td><a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template</a>; <a href="https://www.aepc.gov.np/docs/i-l-l-1617170102.pdf">AEPC lift-irrigation spec</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><em>General practice</em> completes the protection chain:</p>
+<ul>
+<li><strong>Voltage ratings:</strong> every DC device's voltage rating, and every SPD's Ucpv, must exceed Voc corrected to the site minimum temperature.</li>
+<li><strong>AC output breaker:</strong> about 1.25 × the inverter's maximum AC current, which is a 32 A breaker for a 5 kW single-phase unit. Use the maximum OCPD stated in the manual. Deye guidance is 32 A for 3.6 kW and 40 A for 5 kW on the backup port (<a href="https://solardeals.co.za/deye-5kw/">solardeals Deye</a>).</li>
+<li><strong>MCB curves:</strong> B for inverter outputs, C for general loads.</li>
+<li><strong>SPD leads:</strong> keep them at ≤0.5 m in total, since each metre adds about 1 kV.</li>
+<li><strong>Battery chain:</strong> Class T or NH fuse, then a DC isolator or MCCB rated for the battery's prospective fault current, then the inverter. <strong>A BMS is not a fuse.</strong></li>
+<li><strong>AFCI (IEC 63027):</strong> not required in Nepal, but worth choosing on occupied rooftops.</li>
+</ul>
+<p>Nepal's lightning toll makes SPDs non-optional in practice: <strong>237 deaths and 908 injuries from mid-2021 to May 2025</strong>, concentrated in Koshi and Lumbini and in pre-monsoon and monsoon months (<a href="https://thehimalayantimes.com/nepal/lightning-kills-237-injures-908-across-the-country-in-four-years">Himalayan Times</a>; <a href="https://ekantipur.com/en/news/2024/04/05/lightning-killed-850-people-in-10-years-44-54.html">eKantipur</a>). No NPR prices were found for DC MCBs, isolators, SPDs or gPV and Class T fuses.</p>
+<h3 id="earthing-and-lightning-protection">Earthing and lightning protection</h3>
+<p>AEPC's ISPS template is the most specific Nepali earthing rule set (<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template</a>):</p>
+<ul>
+<li><strong>Bonding:</strong> <strong>all array metalwork and equipment bonded into one equipotential system</strong>. Frame-to-bar bonds are ≥6 mm² bare Cu (16 mm² where lightning-rod separation cannot be kept). Bar-to-earth and the technical-room bar use 16 mm².</li>
+<li><strong>Electrodes:</strong> <strong>at least two electrodes</strong>, ≥2.5 m long and spaced ≥2.5 m apart. They are pipe-in-pipe copper or HDG (70-100 µm zinc, OD ≥48 mm), set in ≥30 kg of earth-enhancing compound, interconnected with <strong>50 mm² bare Cu buried ≥0.5 m</strong>.</li>
+<li><strong>Inspection pit:</strong> concrete, 320 mm cube, with a cover marked "EARTH".</li>
+<li><strong>Target resistance:</strong> <strong>≤10 Ω</strong>.</li>
+</ul>
+<p>At lightning-prone hill sites AEPC demanded <strong>≤5 Ω year-round</strong> using 3 m copper-bonded rods. Measured values at those Dhading sites were <strong>39-226 Ω</strong>, which proves that a single rod in hill soil usually fails (<a href="https://www.aepc.gov.np/docs/request-for-quotation-supply-and-installation-of-lightning-protection-system-in-dhading-solar-pv-project-in-benighat-rorang-rural-municipality-dhading-1564391707.pdf">AEPC Dhading LPS RfQ</a>). An older AEPC pump spec accepted ≥1.5 m rods at 10 Ω under IEC 62305 (<a href="https://www.aepc.gov.np/docs/i-l-l-1617170102.pdf">AEPC lift-irrigation spec</a>).</p>
+<p>A Nepali explainer advises <strong>separate</strong> DC, AC and lightning earths (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>). That conflicts with AEPC's interconnected design. IEC practice, and this report's recommendation, is <strong>separate pits bonded together</strong>.</p>
+<p>Where an external lightning protection system is installed, AEPC specifies:</p>
+<ul>
+<li>200 kA aluminium air terminals, at most 12 m apart, 1-2 m above the array;</li>
+<li>a 50 mm² copper down-conductor;</li>
+<li>separation distances of &gt;0.4-0.6 m from PV metalwork.</li>
+</ul>
+<p>(<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template</a>)</p>
+<p>The NEA supply earthing type (TN-C-S vs TT) could not be confirmed from any NEA document. Practitioners treat Nepali homes as <strong>effectively TT</strong>. In TT, IEC 60364-4-41 requires RCD protection, sized so that RA × IΔn ≤ 50 V (<a href="https://tradeplanr.com/guides/earthing-systems-explained">tradeplanr</a>; <a href="https://lsp.global/earthing-systems/">lsp.global</a>). So the app should default to an owner-installed electrode plus a 30 mA RCD on final circuits. Do not earth the PV or battery negative on transformerless hybrids unless the manual allows it (general practice).</p>
+<p><strong>Measuring.</strong> Use a 3-pole fall-of-potential tester with the potential probe at <strong>62%</strong> of the distance to the current probe, checked at 52% and 72% (IEEE 81) (<a href="https://open-exam-prep.com/study-guides/pe-electrical-power/measurement-instrumentation/ground-resistance-testing">open-exam-prep</a>; <a href="https://aemc.com/userfiles/files/resources/news/AEMC_EPS_Ground_Resistance_Testing_Winter2014.pdf">AEMC</a>). Clamp testers <strong>cannot test a single isolated rod</strong> (<a href="https://www.ecmweb.com/basics/bonding-grounding/article/20885263/ground-testing-techniques">ecmweb</a>). Test in the dry season (Chaitra–Jestha), when resistance peaks (general practice).</p>
+<h3 id="changeover-essential-load-board-and-backup-wiring">Changeover, essential-load board and backup wiring</h3>
+<p>No Nepali rule on changeovers or ATS units was found, so manufacturer practice governs. The standard pattern (general practice) is:</p>
+<ol>
+<li>NEA meter, then the main DB, then the inverter GRID port.</li>
+<li>The inverter LOAD/BACKUP port feeds a <strong>separate essential-load DB</strong> with its own RCD and MCBs. Put lights, router, fridge, TV and pump on it, and keep geysers, irons, heaters and induction cookers on the grid DB.</li>
+<li>Add a <strong>break-before-make bypass switch</strong> (Inverter / Off / Grid) so the essential DB can be fed from grid during inverter service.</li>
+</ol>
+<p>Switch neutral with <strong>2-pole</strong> devices on single-phase and <strong>4-pole</strong> on three-phase whenever a source has its own neutral-earth bond. A 3-pole ATS that leaves the neutral unswitched creates a ground loop and nuisance RCD trips (<a href="https://viox.com/hybrid-inverter-ats-wiring-guide-2-wire-start-neutral-bonding/">VIOX ATS guide</a>). Off-grid, the inverter needs an N-E bond in island mode, usually through an internal relay, or RCDs cannot work. A permanent N-E bond can make a Deye-type hybrid reject a generator (<a href="https://powerforum.co.za/topic/7863-deye-hybrid-neutral-bonding-when-off-grid/">PowerForum</a>).</p>
+<p><strong>Never back-feed</strong> through a wall socket, and never let grid and inverter outputs meet. Back-feed into a dead NEA line can electrocute line workers, which is why IEC 62116 anti-islanding is mandatory (<a href="https://www.aepc.gov.np/doc/nepal-photovoltaic-quality-assurance-2025-nepqa-2025">NEPQA-2025</a>). Bring generators in through the inverter's GEN port or an ATS ahead of the GRID port, and never in parallel with NEA supply (general practice).</p>
+<hr />
+<h2 id="series-adds-volts-parallel-adds-amps-and-cold-sets-the-limit">Series adds volts, parallel adds amps, and cold sets the limit</h2>
+<p>The app's string and bank calculator should apply these rules.</p>
+<p><strong>Panels in series</strong> (+ of one to − of the next): voltages add and current stays the same. Ten 41 V-Voc modules give about 410 V at about 13 A (<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template context; general practice</a>). The binding limit is cold. LONGi gives the correction <strong>CVoc = 1 − βVoc × (25 − Tmin)</strong>, with Tmin the lowest expected site temperature (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>). So:</p>
+<ul>
+<li><strong>Maximum modules per string</strong> = floor(lower of the inverter or module maximum voltage ÷ cold-corrected Voc), keeping about 5% margin (<a href="https://community.victronenergy.com/t/mppt-controller-size/50940">Victron Community</a>).</li>
+<li><strong>Minimum modules per string</strong>: hot Vmp at about 70 °C cell temperature in the Terai must stay above the inverter's minimum MPPT voltage (general practice).</li>
+</ul>
+<p>The research found no verified district design temperatures. The app should pull record minimums from DHM data and ask the user for altitude. Kathmandu winters reach about 0 °C and hill sites −10 °C or lower, which raises Voc by roughly 8-12% (general practice).</p>
+<p><strong>Panels in parallel</strong> (+ to +, − to −): currents add and voltage stays the same. Two 13 A strings give 26 A. Parallel strings on one MPPT must have <strong>equal module count, the same model, and the same orientation and tilt</strong>. Never mix module models in a string (<a href="https://static.longi.com/LON_Gi_PV_Module_User_Manual_for_DGBG_1_0_260409_114d652c10.pdf">LONGi</a>). One or two strings need no fuse. <strong>Three or more need gPV fuses</strong> per the reverse-current rule (<a href="https://files.sma.de/downloads/StringsicherungenSMC-UEN123621.pdf">SMA</a>). Use separate MPPTs for different roof faces.</p>
+<p><strong>Batteries in series</strong> raise voltage: four 12 V blocks make 48 V. Use only identical blocks of the same age, matched to within about 0.1 V (general practice). <strong>Pylontech-type 48 V lithium modules must never be wired in series</strong>, because the BMS is designed for 48 V (<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech</a>).</p>
+<p><strong>Batteries in parallel</strong> raise Ah. Pylontech allows <strong>up to 16 modules per group</strong> (1 master + 15 slaves), allows mixing older models only in set positions, and requires the system to rest until SOC LEDs differ by one dot or less (<a href="https://pylonwebs3.s3.amazonaws.com/upload/2024/09/25/RESS-Installation%20Manual-US5000%20US5000-B%205PMPA08-00219_V1.0_20240925124144A058.pdf">Pylontech</a>). Victron's guidance is to wire each battery to busbars with <strong>equal-length cables, a fuse on each positive near the battery, and diagonal take-off</strong>, after fully charging every battery first (<a href="https://communityarchive.victronenergy.com/questions/205572/diagonal-battery-wiring.html">Victron community</a>; <a href="https://community.victronenergy.com/questions/181191/connecting-smart-lithium-batteries-in-parallel-fus.html">Victron fusing</a>). For lead-acid, keep to three parallel strings or fewer and never mix old and new or different brands (general practice).</p>
+<hr />
+<h2 id="nea-owns-the-meter-a-competent-electrician-owns-the-ac-side-and-the-owner-owns-the-choices">NEA owns the meter, a competent electrician owns the AC side, and the owner owns the choices</h2>
+<p><strong>Net billing in practice.</strong> NEA's scheme began with net metering at <strong>NPR 7.30/kWh</strong> for households of 500 W-10 kW (<a href="https://thehimalayantimes.com/business/nepal-electricity-authority-to-purchase-solar-energy-from-households-commercial-entities/">Himalayan Times 2017</a>). The 776th board meeting (2018) set a 500 W minimum, voltage tiers of ≤5 kW at 230 V, 5-40 kW at 400 V and &gt;40 kW at 11 kV, and a PF band of 0.85 lag to 0.95 lead (<a href="https://energypedia.info/images/4/43/Purchase_of_Electricity_from_Soalr_PV_System._Unofficial_English_Translation.pdf">NEA 776th Board</a>). NEA suspended purchases in July 2022 (<a href="https://kathmandupost.com/money/2022/12/24/call-for-reconnecting-rooftop-solar-plants-to-grid">Kathmandu Post 2022</a>) and moved to <strong>net billing at NPR 5.94/kWh</strong>. As of July 2026 that is still the rate, against about NPR 11/unit retail, with developers lobbying to restore NPR 7.30 (<a href="https://www.urjakhabar.com/en/news/2407703494">Urja Khabar 2026</a>; <a href="https://kathmandupost.com/national/2023/02/23/boosting-share-of-alternative-energy-in-power-mix-remains-a-challenge-for-nepal">Kathmandu Post 2023</a>).</p>
+<p>The governing working procedure was last extended only to <strong>Asar 2082 (mid-2025)</strong>. Purchases are capped at 10% of grid capacity, and interconnection often takes longer than construction (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>). Two claims conflict with this and should not be relied on: one source says exports are credited at retail rate (<a href="https://www.nepaldatabase.com/rooftop-solar-subsidy-scheme-2026-in-nepal-eligibility-application-process-and-how-to-estimate-savings">Nepal Database</a>), and another cites a 500 kW cap (<a href="https://www.surgepv.com/blog/solar-incentives-in-nepal">SurgePV</a>). The app should model export at NPR 5.94 and size for daytime self-use. Domestic net-metered systems are <strong>exempt from a DoED generation permit</strong> (<a href="https://www.newbusinessage.com/news/42495/government-revises-solar-energy-development-procedure-to-boost-investment/">New Business Age</a>).</p>
+<p><strong>Procedure.</strong> The reported route is:</p>
+<ol>
+<li>Apply to the local <strong>NEA Distribution Centre</strong>.</li>
+<li>The DC reviews the application.</li>
+<li>A <strong>bidirectional meter</strong> is procured, installed and tested by NEA.</li>
+<li><strong>RETS product certificates</strong> are submitted.</li>
+<li>NEA gives final approval.</li>
+</ol>
+<p>(<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>; <a href="https://myrepublica.nagariknetwork.com/news/nea-to-buy-solar-thermal-energy-from-household-consumers/">myRepublica</a>) The likely documents are a consumer number and bill, citizenship, land ownership or consent, a single-line diagram, datasheets, and IEC 62116/61727 inverter certificates. That list is inferred, not confirmed. Fees, forms and timelines were not found. NEA did not train its distribution-centre staff on the scheme, so expect inconsistency between offices (<a href="https://www.urjakhabar.com/en/news/2407703494">Urja Khabar</a>).</p>
+<p><strong>Subsidies.</strong> Secondary sources say AEPC subsidies go mainly to off-grid, rural and institutional systems. They are paid to AEPC-listed installers, not to self-installers, and not retroactively. Urban on-grid rooftops reportedly get nothing (<a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>). One site instead cites a 2023 guideline of 40% of benchmark cost, capped at NPR 150,000 (<a href="https://www.nepaldatabase.com/nepal-rooftop-solar-subsidy-2023-guideline-details-and-what-to-expect-for-2026">Nepal Database</a>). Neither claim was verified with AEPC.</p>
+<p><strong>Who may do what.</strong> No Nepali law requiring a licensed wireman or electrical contractor for house or PV wiring was found. The Electricity Act 2049 licenses generation, transmission and distribution, not electricians (<a href="https://policy.asiapacificenergy.org/node/384">Asia Pacific Energy Portal</a>). Competence is certified voluntarily through <strong>CTEVT's National Skill Testing Board</strong> (Building Electrician Levels 1-3) (<a href="https://ctevt.org.np/nstb">CTEVT NSTB</a>; <a href="https://www.educatenepal.com/news/detail/ctevt-skill-testing-catches-on">EducateNepal</a>).</p>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Who</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Choose and buy certified equipment; check serials and certificates</td>
+<td><strong>Owner</strong></td>
+</tr>
+<tr>
+<td>Mount the structure, lay conduit, dig earth pits</td>
+<td>Owner, with care at height</td>
+</tr>
+<tr>
+<td>Wire a small low-voltage DC off-grid kit (12/24 V)</td>
+<td>Owner, with fuses</td>
+</tr>
+<tr>
+<td>Wire high-voltage PV strings (hundreds of volts DC), battery bus, AC tie-in, DBs, changeover, RCD/SPD, earth testing</td>
+<td><strong>Competent electrician (NSTB Level 2+ recommended) or AEPC-listed company</strong> (recommended, not a legal mandate found)</td>
+</tr>
+<tr>
+<td>Service line, meter, main incomer, bidirectional meter, net-billing approval</td>
+<td><strong>NEA only</strong></td>
+</tr>
+<tr>
+<td>Subsidised systems</td>
+<td><strong>AEPC-listed competent company only</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Sources: <a href="https://www.aepc.gov.np/sections/competent-companies">AEPC competent companies</a>; <a href="https://www.pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>. The task split is an inference from the absence of a licensing law plus NEA's control of metering.</p>
+<p>The Electricity Regulation 2050 defines wiring and earthing (<a href="https://lawcommission.gov.np/content/12953/12953-electricity-regulation-2050/">Law Commission</a>). A reported 5 MΩ insulation requirement in it could not be confirmed.</p>
+<p><strong>Tools and PPE.</strong> AEPC's handover list is minimal: spare PV, battery and AC cable, 2 pairs of connectors, string and battery fuses, an adjustable wrench, a screwdriver set, a multimeter, and for lead-acid a hydrometer, demineralised water, glasses and gloves (<a href="https://www.aepc.gov.np/docs/template-bidding-document-isps-2kwp-v0-1611325354.pdf">AEPC ISPS template</a>).</p>
+<p>A real installer kit (general practice) adds:</p>
+<ul>
+<li>a CAT III 1000 V multimeter;</li>
+<li>a <strong>DC-capable</strong> clamp meter;</li>
+<li>a 500/1000 V insulation tester (for IEC 62446-1 commissioning);</li>
+<li>a 3/4-pole earth tester;</li>
+<li>the brand's MC4 crimper and spanners;</li>
+<li>a hydraulic lug crimper;</li>
+<li>torque screwdrivers and wrenches;</li>
+<li>1000 V insulated tools;</li>
+<li>a hammer drill and chemical anchors.</li>
+</ul>
+<p>PPE: Class 0 insulated gloves, a face shield, insulated boots, a helmet, and a <strong>full-body harness with an anchored lanyard</strong>.</p>
+<p>The non-negotiable safety facts:</p>
+<ul>
+<li><strong>PV is live whenever lit.</strong> Cover modules or work at dawn or dusk.</li>
+<li><strong>Never pull MC4s under load.</strong></li>
+<li>Lock out and tag out the AC, DC and battery breakers.</li>
+<li>Test before touching.</li>
+<li>Connect battery terminals last, with rings removed.</li>
+<li>Check polarity before closing any breaker.</li>
+</ul>
+<hr />
+<h2 id="indicative-2026-npr-price-sheet-for-app-defaults">Indicative 2026 NPR price sheet for app defaults</h2>
+<div class='tablewrap'><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Indicative NPR (2026)</th>
+<th>Confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Module, 400-600 W</td>
+<td>70-92/Wp incl. VAT</td>
+<td>Aggregator (<a href="https://pricenepal.com/solar-panel-price-nepal/">PriceNepal</a>)</td>
+</tr>
+<tr>
+<td>Installation incl. structure</td>
+<td>15,000-30,000/kW</td>
+<td>Aggregator</td>
+</tr>
+<tr>
+<td>On-grid string inverter, 5 kW</td>
+<td>75,000-105,000</td>
+<td>Aggregator</td>
+</tr>
+<tr>
+<td>Generic hybrid / PCU</td>
+<td>15,000-26,000/kVA</td>
+<td>Derived from dealer listings</td>
+</tr>
+<tr>
+<td>20 A PWM controller</td>
+<td>1,800-3,600</td>
+<td>Dealer (<a href="https://www.megasolarenergy.com.np/products/inverters-batteries">Mega Solar</a>)</td>
+</tr>
+<tr>
+<td>Tubular 12 V 150/200 Ah</td>
+<td>22,000-37,500 / 30,000-51,500</td>
+<td>Dealers</td>
+</tr>
+<tr>
+<td>LFP 48 V 100 Ah</td>
+<td>140,000-190,000 (dealer high 315,000)</td>
+<td>Aggregator/dealer</td>
+</tr>
+<tr>
+<td>3 kW hybrid + 4.8 kWh LFP, installed</td>
+<td>280,000-350,000</td>
+<td>Aggregator</td>
+</tr>
+<tr>
+<td>5 kW hybrid + 9.6 kWh LFP, installed</td>
+<td>420,000-520,000</td>
+<td>Aggregator</td>
+</tr>
+<tr>
+<td>10 kW on-grid, installed</td>
+<td>750,000-900,000</td>
+<td>Aggregator</td>
+</tr>
+<tr>
+<td>Commercial rooftop at 100 kWp</td>
+<td>50,000-60,000/kWp</td>
+<td>Practitioner (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>)</td>
+</tr>
+<tr>
+<td>PV cable, MC4, DC MCB, isolator, SPD, RCD, earthing kit, MPPT controller, structure per kWp</td>
+<td><strong>No Nepali price found</strong></td>
+<td>Use dealer quotes</td>
+</tr>
+</tbody>
+</table></div>
+<p>VAT is 13%. A claimed VAT exemption on solar equipment and the module and inverter customs duties could not be confirmed (<a href="https://sandippaudel.com/rooftop-solar-nepal/">Sandip Paudel</a>; <a href="https://seaskycargoservice.com/blogs/custom-duty-and-tariff-rate-2025">seaskycargo</a>). Expect module-driven increases in late 2026.</p>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>Nepal's quality regime does a good job on the components and leaves the balance-of-system and the grid interface largely unregulated, yet those are where documented failures concentrate: cross-mated connectors, AC breakers on DC, low-interrupt battery fuses, single-rod earths reading over 100 Ω, missing SPDs in one of South Asia's deadliest lightning zones, and inverters killed by cold-morning Voc. A design app adds the most value by enforcing what NEPQA does not: cold-corrected string limits, fuse and breaker DC ratings with interrupting capacity, IEC 61643-32 SPD placement, AEPC's two-electrode ≤10 Ω earthing, and break-before-make backup wiring. It should treat the NEPQA minimums as a red-flag filter on product choices.</p>
+<p>Economics are shifting the rest of the design. With exports credited at NPR 5.94 against roughly NPR 11 retail, an uncertain procedure past Asar 2082, and LFP now about three times cheaper per lifetime kWh than tubular lead-acid at a 1% import duty, the rational Nepali system in 2026 is a self-consumption-sized LV hybrid with closed-loop LFP storage and an export limiter. Grid export is a bonus, not the business case. The open items an app must surface rather than invent are the NBC 104 wind speed, district design temperatures, NEA's current grid-code trip settings and application checklist, the TT/TN status of NEA supplies, and a public register of RETS-certified models.</p>
+<div class="note">Use this guide together with your report from the <a href="app/">app</a>. Prices are indicative; standards
+and NEA procedures change - confirm with AEPC/NEA before you rely on them.</div></article></main>
+<footer><div class="wrap">
+<p><b>ElectricalCalc AI</b> - free, open-source solar design for Nepal. Code: <a href="https://github.com/kesuj/electricalcalc-app">github.com/kesuj/electricalcalc-app</a>.</p>
+<p>Every report is a <b>preliminary calculation</b>, not a certified, approved or stamped design. Prices are indicative
+(2026) and marked with their source; get supplier quotes before you buy. Grid connection needs NEA approval. This site
+gives engineering information only - not legal, tax or financial advice.</p>
+<p>Sunshine data: PVGIS v5.3 © European Union (JRC). Standards quoted: NEPQA-2025 (AEPC), IEC 62548, IEC 60364, IEC 62446.</p>
+</div></footer></body></html>
