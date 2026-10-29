@@ -11,6 +11,12 @@
 - Demonstration project (clearly labelled), sample report, screenshots.
 - 87 automated tests.
 
+## 0.2.0 - 2026-10-29
+### Added
+- **New project design** start page: one form → load schedule, PV sizing, inverter AC current, AC cable, battery DC current and DC cable → full PDF/Markdown report; project auto-saved.
+- Load schedule calculation (connected load, maximum demand with diversity, critical/backup energy, motor surge warning).
+- 10 new tests (98 total), including an end-to-end run of the new page.
+
 ## 0.1.1 - 2026-10-29
 ### Added
 - Public-demo mode for hosted deployments (shared-data warning, uploads disabled); fonts for Linux PDF rendering.

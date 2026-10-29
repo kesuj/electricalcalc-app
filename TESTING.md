@@ -3,7 +3,7 @@
 Run: `.venv\Scripts\python -m pytest`
 
 ## Test report: 2026-10-29, v0.1.0 (Windows 11, Python 3.14.7)
-**88 passed, 0 failed** (87 at first release; +1 public-demo test).
+**98 passed, 0 failed** (v0.2.0; adds load-schedule and full-design workflow tests with hand-calculated values, and an end-to-end run of the New project design page).
 
 | File | Tests | Covers |
 |---|---|---|
@@ -23,7 +23,9 @@ Expected values were calculated by hand from first principles (see the table in 
 - Real browser run (Edge via Playwright): PVGIS fetch → calculate → results rendered; screenshots in `docs/screenshots/`.
 - Sample PDF rendered and visually inspected (`docs/samples/`).
 
+- **Live AI call, Ollama llama3.2:3b (2026-10-29):** asked about the 1φ 4 mm² voltage-drop result; the answer quoted 6.619 V and 2.878% exactly and listed the unchecked items (ampacity, protection, short-circuit). 26.6 s, $0.
+
 ## Not yet tested (known gaps)
-- **No live AI provider call** (no API keys configured). Provider code is tested against simulated HTTP responses only; the Anthropic SDK path is untested.
+- Gemini, OpenRouter and Anthropic have not had a live call (no keys configured); they are tested against simulated HTTP responses only.
 - No comparison against a second independent tool (e.g. PVWatts or PVsyst) for the full solar workflow. PVsyst is installed on this computer, so a cross-check of one case is a good next step.
 - No OCR or scanned-PDF handling; no load or performance testing; no multi-user testing.

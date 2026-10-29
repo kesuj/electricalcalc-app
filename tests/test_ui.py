@@ -62,3 +62,26 @@ def test_public_demo_disables_uploads(monkeypatch):
     assert not at.exception
     assert len(at.get("file_uploader")) == 0
     assert any("disabled" in i.value for i in at.info)
+
+
+def test_design_page_full_run_with_user_loads(temp_data):
+    """Enter a project through the real page (peak-sun-hours mode, no network) and get all results + report."""
+    script = (f"import sys\nsys.path.insert(0, {str(ROOT)!r})\n"
+              "import streamlit as st\nst.cache_resource.clear()\n"
+              "from ui.design import design\ndesign()\n")
+    at = AppTest.from_string(script, default_timeout=60)
+    at.run()
+    assert not at.exception, [e.value for e in at.exception]
+    at.text_input[0].set_value("Test clinic")
+    next(r for r in at.radio if r.label == "Solar data").set_value("I know the peak sun hours")
+    at.run()
+    next(b for b in at.button if b.label == "Fill example loads").click().run()
+    next(r for r in at.radio if r.label == "System type").set_value("Hybrid (with battery backup)").run()
+    next(b for b in at.button if b.label == "Calculate everything").click().run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert not at.error, [e.value for e in at.error]
+    labels = [m.label for m in at.metric]
+    for k in ("Daily energy", "PV array", "Inverter", "Battery", "AC cable (VD only)", "Battery cable (VD only)"):
+        assert k in labels, labels
+    projects = Store(temp_data / "ecalc.db").list_projects()
+    assert projects[0]["name"] == "Test clinic" and projects[0]["n_calcs"] == 6

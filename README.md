@@ -7,6 +7,7 @@
 ![Solar sizing](docs/screenshots/2_solar.png)
 
 ## Features
+- **New project design (start page):** enter a project once, with a load list or monthly bill units, and get the load schedule, PV sizing, inverter, battery, AC and DC cable voltage-drop checks, plus the full PDF report, in one click.
 - **Solar PV sizing (grid-tied / hybrid):**
   - real yield data from [PVGIS](https://re.jrc.ec.europa.eu/pvg_tools/) (EC JRC), or your own peak-sun-hours value
   - panel count, inverter sizing, and battery sizing that keeps **usable vs nominal** capacity separate
@@ -31,7 +32,7 @@ uv pip install --python .venv\Scripts\python.exe -r requirements.txt
 ```
 macOS/Linux: use `.venv/bin/` instead of `.venv\Scripts\`. Without uv: `python -m venv .venv` then `pip install -r requirements.txt`.
 
-Open http://localhost:8501, then **Home → Load demonstration project → Reports → Download PDF**.
+Open http://localhost:8501, enter your project on **New project design** and press **Calculate everything**.
 
 AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay blocked until you set `ECALC_MONTHLY_BUDGET_USD`.
 
@@ -39,7 +40,7 @@ AI is optional: copy `.env.example` to `.env` and add a key. Paid providers stay
 ```powershell
 .venv\Scripts\python -m pytest
 ```
-The 88 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
+The 98 tests use reference values calculated by hand. See [TESTING.md](TESTING.md).
 
 ## Documentation
 [ARCHITECTURE](ARCHITECTURE.md) · [ENGINEERING_METHODS](ENGINEERING_METHODS.md) · [SECURITY](SECURITY.md) · [TESTING](TESTING.md) · [CHANGELOG](CHANGELOG.md)
