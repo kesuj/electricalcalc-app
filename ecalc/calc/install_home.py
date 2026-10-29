@@ -473,10 +473,12 @@ def build_home_install(design: CalcResult, x: HomeInputs, ii: InstallInputs) -> 
             "Connect the DC isolator output to the inverter PV input (check polarity twice).",
             "Connect the PV DC isolator output to the PV input terminals - still with the isolator OFF.",
             "Set the battery type and voltages in the inverter/controller menu before switching on (§127)."]),
-        ("8. AC connection - STOP: licensed electrician (§119, §126)", [
+        ("8. AC connection - careful: 230 V can kill (§119, §126)", [
             f"The inverter AC output goes through a {ac_mcb} A MCB, a 30 mA RCD and an AC surge protector to the "
             f"{'backup distribution board via the changeover switch' if mode == 'hybrid_backup' else 'distribution board'}.",
-            "Connecting to the house wiring must be done or checked by a licensed electrician.",
+            "Switch OFF the house main switch first. No Nepali licence law for house wiring was found, so you may "
+            "make this connection yourself following these steps exactly, then press the RCD test button; if you are "
+            "not confident with 230 V, have a CTEVT-certified electrician do it while you check it against this report.",
             *(["For net billing: apply at your NEA distribution centre BEFORE connecting to the grid; NEA approves the "
                "inverter (anti-islanding) and fits a bidirectional meter. Exports are not credited before approval."]
               if mode != "off_grid" else [])]),
@@ -553,8 +555,9 @@ def build_home_install(design: CalcResult, x: HomeInputs, ii: InstallInputs) -> 
         "A battery short circuit releases huge current: fire, burns, explosion. Fuse it, insulate tools, remove jewellery.",
         "Work at height only with a ladder footed by a helper, a harness on steep roofs, and never in rain or wind.",
         "Lead-acid batteries contain acid and release hydrogen - ventilate, no flames, wear goggles and gloves.",
-        "Connection to the building wiring and the NEA grid must be done/checked by a licensed electrician and "
-        "approved by NEA; never back-feed the grid without approval (danger to line workers).",
+        "Connecting to the NEA grid needs NEA approval and NEA's bidirectional meter; never back-feed the grid "
+        "without approval (danger to line workers). House wiring at 230 V can kill: switch the main switch OFF, or "
+        "use a CTEVT-certified electrician if you are not confident.",
         "Use NEPQA-2025 compliant equipment (AEPC) so warranties and any subsidy remain valid.",
     ]
     refs = [f"{REF} §104-§112 (design, protection), §117-§130 (installation), §131-§139 (troubleshooting, maintenance)",

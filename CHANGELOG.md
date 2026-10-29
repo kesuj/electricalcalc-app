@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0 - 2026-10-30
+### Added
+- **Every part explained** (Home report section B): 15 component cards personalised to the user's numbers - what it does, types compared, best choice for this system, how to select, buying checks (NEPQA-2025, fake-product signs), series/parallel, how to connect, common mistakes.
+- **Wiring drawings** of the user's exact system (SVG, on screen and in the PDF): panel strings with + / - links, battery bank with the diagonal take-off, whole system, earthing, inverter terminals.
+- **Skills** section: multimeter, MC4 crimping, battery lugs, roof fixing, earth testing, inverter battery settings, switch-on/shutdown.
+- **Compulsory or optional in Nepal**: a column on every shopping-list item and a summary table per system type.
+- Deep research (6 researchers + report, reports/Nepal solar PV component guide.md) applied to the cards: NEPQA-2025 rules, AEPC earthing spec (2 electrodes, <= 10 ohm), lithium cold-charging limit with site warning, 10-20 kA battery fusing, PWM only below 20 A, second DC SPD for runs >= 10 m, NEA connection voltages.
+### Fixed
+- Legal wording: NEA approval is compulsory for grid connection/export; no Nepali licence law for house wiring was found (an electrician is recommended for 230 V work, not required).
+- PDF drawings keep their heading on the same page; battery drawing no longer runs a cable through the isolator label.
+
 ## 0.5.0 - 2026-10-30
 ### Changed
 - The site now has **just two sections: 🏠 Home solar and 🏭 Solar farm**.

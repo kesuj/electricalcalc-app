@@ -295,7 +295,7 @@ def design():
         # for the 📘 Book method tab
         "lat": lat, "lon": lon, "tilt": tilt, "aspect": aspect, "place": place, "inputs": x,
         "monthly_psh": res.monthly_irr_kwh_m2_day, "temp_loss_pct": x.temp_loss_pct, "res_details": res.details,
-        "pkg": pkg,
+        "pkg": pkg, "ii": ii,
     }
     _show_results(store)
 
@@ -382,7 +382,7 @@ def _show_results(store):
     plain = plain_summary_home(r, saving, cf.simple_payback_years if cf else None, out["capex"])
     st.success("\n".join(f"- {line}" for line in plain))
 
-    sections = home_sections(out["pkg"]) if out.get("pkg") else []
+    sections = home_sections(out["pkg"], r, out.get("inputs"), out.get("ii")) if out.get("pkg") else []
     tabs = st.tabs(["🛠 Installation guide", "📅 Month by month", "🕐 A day with a power cut", "💰 Money",
                     "🔧 Engineering details", "📄 Report", "📘 Book method"])
     with tabs[0]:

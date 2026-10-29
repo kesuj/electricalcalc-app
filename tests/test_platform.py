@@ -269,3 +269,24 @@ def test_diagram_paths_follow_real_edges_only():
     assert paths[0] == ["pv", "iso", "inv", "mcb"]
     assert ["earth", "bat", "fuse"] in paths and ends[paths.index(["earth", "bat", "fuse"])] == "inv"
     assert sorted(n for p in paths for n in p) == sorted(n["id"] for n in d["nodes"])   # every box drawn once
+
+
+def test_report_svg_and_cards(results):
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 60">'
+           '<rect x="5" y="5" width="60" height="40" fill="#eaf2fb" stroke="#1f4e79"/>'
+           '<text x="10" y="30" font-size="10" font-family="Helvetica">Panel 1</text></svg>')
+    card = {"name": "Solar panels", "what_it_does": "Turns sunlight into DC electricity.",
+            "types": [{"Type": "TOPCon", "Good": "efficient"}], "best_for_you": "550 W TOPCon.",
+            "how_to_select": ["Voltage rating at least 211 V"], "buying_checklist": ["NEPQA efficiency >= 21 %"],
+            "series_or_parallel": "Series: voltages add.", "how_to_connect": ["Plus to minus."],
+            "mistakes": ["Mixing panel models."], "ref": "§74"}
+    sec = [{"title": "Your wiring", "svgs": [("Panel strings", svg)]}, {"title": "Every part explained", "cards": [card]}]
+    pdf = reports.build_pdf(reports.ReportMeta("P"), results, sections=sec)
+    from pypdf import PdfReader
+    import io
+    text = " ".join(pg.extract_text() for pg in PdfReader(io.BytesIO(pdf)).pages)
+    for s in ("Panel strings", "Solar panels", "Best for your system", "How to select", "Series or parallel?",
+              "1. Plus to minus.", "Common mistakes"):
+        assert s in text, s
+    md = reports.build_markdown(reports.ReportMeta("P"), results, sections=sec)
+    assert "### Solar panels" in md and "**Best for your system:** 550 W TOPCon." in md

@@ -249,6 +249,10 @@ def _pdf_section(pdf: "_PDF", title: str, sec: dict) -> None:
         pdf.para(sec["intro"])
     if sec.get("diagram"):
         _pdf_diagram(pdf, sec["diagram"])
+    for caption, svg in sec.get("svgs", []):
+        _pdf_svg(pdf, caption, svg)
+    for card in sec.get("cards", []):
+        _pdf_card(pdf, card)
     if sec.get("bullets"):
         pdf.bullets(sec["bullets"])
     if sec.get("numbered"):
@@ -349,6 +353,75 @@ def _pdf_diagram(pdf: "_PDF", diagram: dict) -> None:
     pdf.ln(2)
 
 
+def _svg_height_mm(svg: str, width_mm: float) -> float:
+    import re
+    m = re.search(r'viewBox="\s*[-\d.]+\s+[-\d.]+\s+([\d.]+)\s+([\d.]+)"', svg)
+    if not m:
+        return 90.0
+    w, h = float(m.group(1)), float(m.group(2))
+    return width_mm * h / w if w else 90.0
+
+
+def _pdf_svg(pdf: "_PDF", caption: str, svg: str) -> None:
+    import io
+    width = pdf.w - pdf.l_margin - pdf.r_margin
+    needed = _svg_height_mm(svg, width) + (10 if caption else 0)
+    if pdf.get_y() + needed > pdf.h - 18:      # keep the heading with its drawing
+        pdf.add_page()
+    if caption:
+        pdf.h3(caption)
+    try:
+        pdf.image(io.BytesIO(svg.encode("utf-8")), x=pdf.l_margin, w=width)
+    except Exception as e:  # a drawing must never break the whole report
+        pdf.para(f"[Drawing could not be rendered in the PDF: {type(e).__name__}] - see the website.", 8)
+    pdf.ln(2)
+
+
+def _pdf_card(pdf: "_PDF", c: dict) -> None:
+    if pdf.get_y() > pdf.h - 60:
+        pdf.add_page()
+    pdf.h2(c["name"])
+    if c.get("what_it_does"):
+        pdf.para(c["what_it_does"])
+    if c.get("types"):
+        pdf.h3("Types"); pdf.grid(c["types"])
+    if c.get("best_for_you"):
+        pdf.h3("Best for your system"); pdf.para(c["best_for_you"])
+    if c.get("how_to_select"):
+        pdf.h3("How to select (your numbers)"); pdf.bullets(c["how_to_select"])
+    if c.get("buying_checklist"):
+        pdf.h3("When buying, check"); pdf.bullets(c["buying_checklist"])
+    if c.get("series_or_parallel"):
+        pdf.h3("Series or parallel?"); pdf.para(c["series_or_parallel"])
+    if c.get("how_to_connect"):
+        pdf.h3("How to connect"); pdf.bullets([f"{i}. {t}" for i, t in enumerate(c["how_to_connect"], 1)])
+    if c.get("mistakes"):
+        pdf.h3("Common mistakes"); pdf.bullets(c["mistakes"])
+    if c.get("ref"):
+        pdf.para(f"Reference: {c['ref']}", 8)
+
+
+def _md_card(c: dict) -> list[str]:
+    out = [f"### {c['name']}", "", c.get("what_it_does", ""), ""]
+    if c.get("types"):
+        cols = list(c["types"][0])
+        out += ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+        out += ["| " + " | ".join(str(r.get(k, "")) for k in cols) + " |" for r in c["types"]] + [""]
+    if c.get("best_for_you"):
+        out += [f"**Best for your system:** {c['best_for_you']}", ""]
+    for title, key in (("How to select", "how_to_select"), ("When buying, check", "buying_checklist"),
+                       ("Common mistakes", "mistakes")):
+        if c.get(key):
+            out += [f"**{title}:**"] + [f"- {x}" for x in c[key]] + [""]
+    if c.get("series_or_parallel"):
+        out += [f"**Series or parallel?** {c['series_or_parallel']}", ""]
+    if c.get("how_to_connect"):
+        out += ["**How to connect:**"] + [f"{i}. {t}" for i, t in enumerate(c["how_to_connect"], 1)] + [""]
+    if c.get("ref"):
+        out += [f"_Reference: {c['ref']}_", ""]
+    return out
+
+
 def _md_section(title: str, sec: dict) -> list[str]:
     lines = [f"## {title}", ""]
     if sec.get("intro"):
@@ -359,6 +432,10 @@ def _md_section(title: str, sec: dict) -> list[str]:
         lines += [f"{labels.get(e['from'], e['from'])}  --[{e.get('label', '')}]-->  {labels.get(e['to'], e['to'])}"
                   for e in sec["diagram"].get("edges", [])]
         lines += ["```", ""]
+    for caption, _svg in sec.get("svgs", []):
+        lines += [f"*[Drawing: {caption} - see the PDF or website]*", ""]
+    for card in sec.get("cards", []):
+        lines += _md_card(card)
     lines += [f"- {b}" for b in sec.get("bullets", [])]
     lines += [f"{n}. {t}" for n, t in enumerate(sec.get("numbered", []), 1)]
     for gtitle, steps in sec.get("groups", []):
