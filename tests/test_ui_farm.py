@@ -81,7 +81,9 @@ def test_farm_full_run_hand_checked(temp_data):
     # money: build cost 10 MW × Rs 65,000/kW = Rs 65 crore
     assert _metric(at, "Build cost") == "Rs 65.0 crore"
     # report + save
-    _by(at.button, "💾 Save to My projects").click().run()
+    titles = [e.label for e in at.expander]
+    assert any("Bill of quantities" in t for t in titles) and any("Construction sequence" in t for t in titles)
+    _by(at.button, "💾 Save on this computer").click().run()
     assert not at.exception
     projects = Store(temp_data / "ecalc.db").list_projects()
     assert projects and projects[0]["name"] == "Test 10 MW" and projects[0]["n_calcs"] == 3

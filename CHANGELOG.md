@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 - 2026-10-30
+### Changed
+- The site now has **just two sections: 🏠 Home solar and 🏭 Solar farm**.
+- Home: new Step 7 installation questions (cable routes, inverter location, earth pit) and panel datasheet values in Engineer settings.
+### Added
+- **Installation guide (Home)** - first tab and front of the PDF: shopping list with exact ratings (NEPQA-2025 floors), string and battery layout, wiring diagram, cable/fuse/breaker schedule (larger of current-rating and voltage-drop sizes), safety, step-by-step installation (Boxwell §104-§130), commissioning record with expected values, maintenance and troubleshooting.
+- **Construction package (Farm)** for the EPC contractor: plant hierarchy and counts, block single-line diagram, bill of quantities, cable schedule, switchgear/protection/earthing/NEA interconnection, construction sequence, IEC 62446 tests, O&M, Nepal permits.
+- **📘 Book method tabs** on both pages: the books' steps worked with the user's numbers and their charts recreated with Nepal data (sun at five tilts, sun path, roof-direction loss, temperature, shading heat-map, battery cycles; inverter I-V window, voltage ladder, 5-step flowchart, lifetime energy, cost stack, the book's protection/testing tables).
+- Cable current ratings (IEC 60364-5-52 method B1, conservative) and Ib ≤ In ≤ Iz device coordination.
+- PDF reports can carry installation sections and a wiring diagram that follows real connections only, plus a full connection table.
+
 ## 0.4.0 - 2026-10-29
 ### Added
 - **🏠 Home solar** rebuilt on the method of Boxwell, *Solar Electricity Handbook* (step order, formulas, worked example as tests), with modern Nepal data: PVGIS site sunshine, LiFePO4, NEPQA-2025 floors, three system types (grid-tied, hybrid with load-shedding backup, off-grid).

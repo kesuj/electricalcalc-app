@@ -140,7 +140,8 @@ class _PDF(FPDF):
 
 
 def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None = None,
-              summary: list[str] | None = None) -> bytes:
+              summary: list[str] | None = None, sections: list[dict] | None = None,
+              title: str = "Preliminary Engineering Calculation Report") -> bytes:
     """results: list of CalcResult.to_dict() items. ai_commentary is printed in a separately
     labelled section so calculated values are never mixed with AI text."""
     if not results:
@@ -148,7 +149,7 @@ def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None =
     pdf = _PDF(meta.project_name, meta.is_demo)
     pdf.alias_nb_pages()
     pdf.add_page()
-    pdf.h1("Preliminary Engineering Calculation Report")
+    pdf.h1(title)
     pdf.kv_table([("Project", meta.project_name), ("Client", meta.client or "-"), ("Location", meta.location or "-"),
                   ("Prepared by", meta.prepared_by or "-"), ("Report date", meta.report_date),
                   ("Software", f"{config.APP_NAME} v{__version__}"), ("Review status", meta.review_status),
@@ -161,8 +162,14 @@ def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None =
         pdf.h2("Summary in plain words"); pdf.bullets(summary)
     if meta.notes:
         pdf.h2("Scope and notes"); pdf.para(meta.notes)
+    sections = sections or []
     pdf.h2("Contents")
-    pdf.bullets([f"{i}. {r['name']}" for i, r in enumerate(results, 1)])
+    pdf.bullets([f"{chr(65 + i)}. {sec['title']}" for i, sec in enumerate(sections)] +
+                [f"{i}. {r['name']}" + (" (calculation appendix)" if sections else "") for i, r in enumerate(results, 1)])
+
+    for i, sec in enumerate(sections):
+        pdf.add_page()
+        _pdf_section(pdf, f"{chr(65 + i)}. {sec['title']}", sec)
 
     for i, r in enumerate(results, 1):
         pdf.add_page()
@@ -199,9 +206,10 @@ def build_pdf(meta: ReportMeta, results: list[dict], ai_commentary: str | None =
 
 
 def build_markdown(meta: ReportMeta, results: list[dict], ai_commentary: str | None = None,
-                   summary: list[str] | None = None) -> str:
+                   summary: list[str] | None = None, sections: list[dict] | None = None,
+                   title: str = "Preliminary Engineering Calculation Report") -> str:
     """Editable plain-text version of the same report."""
-    lines = [f"# Preliminary Engineering Calculation Report - {meta.project_name}", ""]
+    lines = [f"# {title} - {meta.project_name}", ""]
     if meta.is_demo:
         lines += ["> **DEMONSTRATION DATA - NOT A REAL PROJECT**", ""]
     lines += [f"- Client: {meta.client or '-'}", f"- Location: {meta.location or '-'}",
@@ -210,6 +218,8 @@ def build_markdown(meta: ReportMeta, results: list[dict], ai_commentary: str | N
               f"- Reviewer: {meta.reviewer or 'Not reviewed'}", "", f"> {DISCLAIMER}", ""]
     if summary:
         lines += ["## Summary in plain words", ""] + [f"- {x}" for x in summary] + [""]
+    for i, sec in enumerate(sections or []):
+        lines += _md_section(f"{chr(65 + i)}. {sec['title']}", sec)
     for i, r in enumerate(results, 1):
         lines += [f"## {i}. {r['name']}", "", "### Inputs", "", "| Parameter | Value |", "|---|---|"]
         lines += [f"| {q['label'] or k} | {_fmt(q)} |" for k, q in r["inputs"].items()]
@@ -229,6 +239,141 @@ def build_markdown(meta: ReportMeta, results: list[dict], ai_commentary: str | N
     if ai_commentary:
         lines += ["## AI-generated commentary (not part of the calculation)", "", ai_commentary, ""]
     return "\n".join(lines)
+
+
+def _pdf_section(pdf: "_PDF", title: str, sec: dict) -> None:
+    """Section dict keys (all optional): intro, bullets, numbered, groups [(title, [steps])], table [rows],
+    tables {name: rows}, diagram {nodes: [{id, label}], edges: [{from, to, label}]}, note."""
+    pdf.h2(title)
+    if sec.get("intro"):
+        pdf.para(sec["intro"])
+    if sec.get("diagram"):
+        _pdf_diagram(pdf, sec["diagram"])
+    if sec.get("bullets"):
+        pdf.bullets(sec["bullets"])
+    if sec.get("numbered"):
+        pdf.bullets([f"{n}. {t}" for n, t in enumerate(sec["numbered"], 1)])
+    for gtitle, steps in sec.get("groups", []):
+        pdf.h3(gtitle)
+        pdf.bullets([f"{n}. {t}" for n, t in enumerate(steps, 1)])
+    if sec.get("table"):
+        pdf.grid(sec["table"])
+    for tname, rows in (sec.get("tables") or {}).items():
+        if rows:
+            pdf.h3(tname); pdf.grid(rows)
+    if sec.get("note"):
+        pdf.ln(1); pdf.para(sec["note"], 8.5)
+
+
+def diagram_paths(diagram: dict) -> tuple[list[list[str]], dict]:
+    """Split a connection graph into drawable paths that follow real edges only.
+    Returns (paths, ends) where ends[path_index] = node id the path continues into (already drawn)."""
+    nodes = [n["id"] for n in diagram.get("nodes", [])]
+    out: dict[str, list[str]] = {n: [] for n in nodes}
+    incoming = {n: 0 for n in nodes}
+    for e in diagram.get("edges", []):
+        if e["from"] in out and e["to"] in incoming:
+            out[e["from"]].append(e["to"])
+            incoming[e["to"]] += 1
+    starts = [n for n in nodes if incoming[n] == 0] + nodes
+    seen: set[str] = set()
+    paths, ends = [], {}
+    for s0 in starts:
+        if s0 in seen:
+            continue
+        path, cur = [s0], s0
+        seen.add(s0)
+        while True:
+            nxt = [t for t in out[cur] if t not in seen]
+            if not nxt:
+                joined = [t for t in out[cur] if t in seen and t not in path]
+                if joined:
+                    ends[len(paths)] = joined[0]
+                break
+            cur = nxt[0]
+            path.append(cur)
+            seen.add(cur)
+        paths.append(path)
+    return paths, ends
+
+
+def _pdf_diagram(pdf: "_PDF", diagram: dict) -> None:
+    """Box-and-arrow single-line diagram drawn with PDF primitives. Each power path is drawn as its own
+    column of boxes with arrows only where a cable exists, followed by a full connection table."""
+    labels = {n["id"]: n["label"] for n in diagram.get("nodes", [])}
+    edge_label = {(e["from"], e["to"]): e.get("label", "") for e in diagram.get("edges", [])}
+    paths, ends = diagram_paths(diagram)
+    box_w, line_h, gap = 100.0, 4.2, 13.0
+    x = (pdf.w - box_w) / 2
+    pdf.set_draw_color(30, 90, 160)
+    for pi, path in enumerate(paths):
+        if len(paths) > 1:
+            if pdf.get_y() > pdf.h - 45:
+                pdf.add_page()
+            pdf.h3(f"Path {pi + 1}")
+        for i, nid in enumerate(path):
+            pdf.set_font(pdf.family, "B", 8.5)
+            text = pdf.t(labels[nid])
+            n_lines = len(pdf.multi_cell(box_w - 4, line_h, text, dry_run=True, output="LINES"))
+            box_h = n_lines * line_h + 3
+            if pdf.get_y() + box_h + gap > pdf.h - 20:
+                pdf.add_page()
+            y = pdf.get_y()
+            pdf.set_fill_color(234, 242, 251)
+            pdf.rect(x, y, box_w, box_h, style="DF")
+            pdf.set_xy(x + 2, y + 1.5)
+            pdf.multi_cell(box_w - 4, line_h, text, align="C")
+            pdf.set_y(y + box_h)
+            nxt = path[i + 1] if i + 1 < len(path) else ends.get(pi)
+            if nxt is None:
+                continue
+            cx, y0, y1 = pdf.w / 2, pdf.get_y(), pdf.get_y() + gap
+            pdf.line(cx, y0, cx, y1)
+            pdf.line(cx, y1, cx - 1.5, y1 - 2.5)
+            pdf.line(cx, y1, cx + 1.5, y1 - 2.5)
+            pdf.set_font(pdf.family, "", 7.5)
+            pdf.set_xy(cx + 3, y0 + 3)
+            pdf.cell(85, 4, pdf.t(edge_label.get((nid, nxt), ""))[:60])
+            pdf.set_y(y1)
+            if i + 1 >= len(path):        # continues into a box drawn in another path
+                pdf.set_font(pdf.family, "", 8)
+                pdf.set_x(x)
+                pdf.cell(box_w, 5, pdf.t(f"continues into: {labels[nxt].splitlines()[0]} (see above)"), align="C")
+                pdf.ln(6)
+        pdf.ln(3)
+    rows = [{"From": labels.get(e["from"], e["from"]).splitlines()[0], "To": labels.get(e["to"], e["to"]).splitlines()[0],
+             "Cable / protection": e.get("label", "")} for e in diagram.get("edges", [])]
+    if rows:
+        pdf.h3("Every connection (wire from this table)")
+        pdf.grid(rows)
+    pdf.ln(2)
+
+
+def _md_section(title: str, sec: dict) -> list[str]:
+    lines = [f"## {title}", ""]
+    if sec.get("intro"):
+        lines += [sec["intro"], ""]
+    if sec.get("diagram"):
+        lines += ["```"]
+        labels = {n["id"]: n["label"] for n in sec["diagram"].get("nodes", [])}
+        lines += [f"{labels.get(e['from'], e['from'])}  --[{e.get('label', '')}]-->  {labels.get(e['to'], e['to'])}"
+                  for e in sec["diagram"].get("edges", [])]
+        lines += ["```", ""]
+    lines += [f"- {b}" for b in sec.get("bullets", [])]
+    lines += [f"{n}. {t}" for n, t in enumerate(sec.get("numbered", []), 1)]
+    for gtitle, steps in sec.get("groups", []):
+        lines += ["", f"### {gtitle}", ""] + [f"{n}. {t}" for n, t in enumerate(steps, 1)]
+    tables = dict(sec.get("tables") or {})
+    if sec.get("table"):
+        tables = {"": sec["table"], **tables}
+    for tname, rows in tables.items():
+        if rows:
+            cols = list(rows[0])
+            lines += ["", f"### {tname}" if tname else "", "", "| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+            lines += ["| " + " | ".join(str(r.get(c, "")) for c in cols) + " |" for r in rows]
+    if sec.get("note"):
+        lines += ["", f"> {sec['note']}"]
+    return lines + [""]
 
 
 def result_dicts(results: list[CalcResult]) -> list[dict]:

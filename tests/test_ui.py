@@ -110,6 +110,14 @@ def _common_answers(at, mode):
     _by_label(at.radio, "Choose one *").set_value(mode).run()
 
 
+def _install_answers(at, battery=True):
+    _by_label(at.number_input, "Panels → inverter cable route (m) *").set_value(15.0)
+    _by_label(at.number_input, "Inverter → main switchboard (m) *").set_value(8.0)
+    if battery:
+        _by_label(at.number_input, "Battery → inverter (m) *").set_value(2.0)
+    _by_label(at.radio, "Where will the inverter be mounted? *").set_value("Indoors (dry, ventilated wall)")
+
+
 def test_home_hybrid_with_bill_and_backup(temp_data):
     """Bill 250 units + backup fridge (150 W) & 8 LED (80 W) for 4 h -> battery usable 230/0.94*4/0.95 = 1.030 kWh."""
     at = _design_app()
@@ -121,6 +129,7 @@ def test_home_hybrid_with_bill_and_backup(temp_data):
     _add_appliance(at, "Refrigerator", 1)
     _add_appliance(at, "LED bulb", 8)
     _by_label(at.selectbox, "Your NEA meter *").set_value("Single-phase 15 A (most homes)")
+    _install_answers(at)
     _by_label(at.button, "Calculate my solar system").click().run()
     assert not at.exception, [e.value for e in at.exception]
     assert not at.error, [e.value for e in at.error]
@@ -143,10 +152,18 @@ def test_home_off_grid_with_appliances(temp_data):
     _add_appliance(at, "LED bulb", 6, 5.0)
     _add_appliance(at, "Laptop", 1, 4.0)
     _by_label(at.number_input, "Days the battery must last without sun *").set_value(2.0)
+    _install_answers(at)
     _by_label(at.button, "Calculate my solar system").click().run()
     assert not at.exception, [e.value for e in at.exception]
     assert not at.error, [e.value for e in at.error]
     assert at.session_state["home_out"]["mode"] == "off_grid"
+    pkg = at.session_state["home_out"]["pkg"]
+    items = " ".join(r["Item"] for r in pkg.bom)
+    for must in ("PV module", "attery", "harge controller", "nverter", "arth"):
+        assert must in items, must
+    titles = [e.label for e in at.expander]
+    assert any("What to buy" in t for t in titles) and any("Step-by-step installation" in t for t in titles)
+    assert not any("NEA" in r["Item"] and "meter" in r["Item"].lower() for r in pkg.bom)   # off-grid: no NEA meter
 
 
 def test_home_lists_unanswered_questions():

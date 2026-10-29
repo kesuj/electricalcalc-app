@@ -22,7 +22,7 @@
   - cost controls: monthly budget, per-request cap, usage log, and no silent fallback to a paid provider
 - **Document assistant:** local PDF/TXT search with page citations, plus prompt-injection screening.
 
-[Sample report (demonstration data)](docs/samples/DEMO_sample_report.pdf)
+[Sample installation report (Biratnagar hybrid home)](docs/samples/HOME_installation_report_Biratnagar.pdf)
 
 ## Quick start (Windows)
 ```powershell

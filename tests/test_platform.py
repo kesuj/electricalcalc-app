@@ -234,3 +234,38 @@ def test_reports_include_plain_summary(results):
     import io
     pdf = reports.build_pdf(meta, results, summary=["You need 6 solar panels."])
     assert "Summary in plain words" in PdfReader(io.BytesIO(pdf)).pages[0].extract_text()
+
+
+def test_report_sections_with_diagram(results):
+    sec = [{"title": "Shopping list", "intro": "Buy these.", "table": [{"Item": "PV module", "Qty": 4}]},
+           {"title": "Wiring diagram", "diagram": {"nodes": [{"id": "pv", "label": "PV array 4 x 550 W"},
+                                                             {"id": "inv", "label": "Hybrid inverter 3 kW"},
+                                                             {"id": "bat", "label": "Battery 48 V"}],
+                                                   "edges": [{"from": "pv", "to": "inv", "label": "4 mm² PV cable"},
+                                                             {"from": "bat", "to": "inv", "label": "25 mm², 80 A fuse"}]}},
+           {"title": "How to install", "groups": [("Safety", ["Wear gloves.", "Cover panels."])]}]
+    meta = reports.ReportMeta("P")
+    pdf = reports.build_pdf(meta, results, sections=sec, title="Installation Report")
+    from pypdf import PdfReader
+    import io
+    text = " ".join(p.extract_text() for p in PdfReader(io.BytesIO(pdf)).pages)
+    for s in ("Installation Report", "A. Shopping list", "B. Wiring diagram", "PV array 4 x 550 W", "C. How to install",
+              "1. Wear gloves.", "(calculation appendix)"):
+        assert s in text, s
+    md = reports.build_markdown(meta, results, sections=sec)
+    assert "## B. Wiring diagram" in md and "--[4 mm² PV cable]-->" in md and "1. Wear gloves." in md
+
+
+def test_diagram_paths_follow_real_edges_only():
+    d = {"nodes": [{"id": i, "label": i} for i in ("pv", "iso", "earth", "bat", "fuse", "inv", "mcb")],
+         "edges": [{"from": "pv", "to": "iso"}, {"from": "iso", "to": "inv"}, {"from": "bat", "to": "fuse"},
+                   {"from": "fuse", "to": "inv"}, {"from": "inv", "to": "mcb"}, {"from": "earth", "to": "bat"}]}
+    paths, ends = reports.diagram_paths(d)
+    # every consecutive pair inside a path is a real edge
+    edges = {(e["from"], e["to"]) for e in d["edges"]}
+    for path in paths:
+        for a, b in zip(path, path[1:]):
+            assert (a, b) in edges
+    assert paths[0] == ["pv", "iso", "inv", "mcb"]
+    assert ["earth", "bat", "fuse"] in paths and ends[paths.index(["earth", "bat", "fuse"])] == "inv"
+    assert sorted(n for p in paths for n in p) == sorted(n["id"] for n in d["nodes"])   # every box drawn once

@@ -21,6 +21,9 @@ from ecalc.finance import cash_flow
 from ecalc.nepal import site_choices, site_coords, site_name
 from ecalc.solar_data import PVGISError
 from ui.charts import BAD, SUN, USE, cumulative_cash, losses_waterfall
+from ui.book_farm import book_farm_tab
+from ecalc.calc.install_farm import PackageInputs, build_farm_package
+from ui.package_view import farm_sections, render_sections
 from ui.common import get_store, page_header, render_result
 from ui.hints import missing, num
 
@@ -156,8 +159,9 @@ def _results(store, out: dict, eng: dict):
     psh = sum(p * d for p, d in zip(psh_m, DAYS)) / 365
     st.divider()
     st.header(f"Your solar farm - {out['name']}")
-    t_energy, t_layout, t_strings, t_losses, t_money, t_report = st.tabs(
-        ["📊 Energy", "📐 Layout & land", "⚡ Strings & inverters", "🔻 Losses", "💰 Money", "📄 Report"])
+    t_pkg, t_energy, t_layout, t_strings, t_losses, t_money, t_book, t_report = st.tabs(
+        ["🛠 Construction package", "📊 Energy", "📐 Layout & land", "⚡ Strings & inverters", "🔻 Losses", "💰 Money",
+         "📘 Book method", "📄 Report"])
 
     # ---- interactive inputs first (tabs can be filled in any order) ---------------------------
     with t_losses:
@@ -217,10 +221,11 @@ def _results(store, out: dict, eng: dict):
         ac_mw = out["ac_limit"] or (n_inv * eng["kva"] / 1000 if n_inv else None)
         shade_h = {"Noon only (book minimum)": 0, "10 am - 2 pm": 2, "9 am - 3 pm (recommended)": 3}[
             st.session_state.get("f_shade", "9 am - 3 pm (recommended)")]
-        fr = farm_design(FarmInputs(capacity_mwp=out["mwp"], latitude=out["lat"], annual_psh=psh, monthly_psh=psh_m,
-                                    losses_pct=losses, tilt_deg=tilt, table_slant_m=slant,
-                                    module_efficiency_pct=eng["eff"], land_extra_pct=eng["extra_land"], ac_mw=ac_mw,
-                                    degradation_pct=deg, shade_free_hours=shade_h))
+        fi = FarmInputs(capacity_mwp=out["mwp"], latitude=out["lat"], annual_psh=psh, monthly_psh=psh_m,
+                        losses_pct=losses, tilt_deg=tilt, table_slant_m=slant,
+                        module_efficiency_pct=eng["eff"], land_extra_pct=eng["extra_land"], ac_mw=ac_mw,
+                        degradation_pct=deg, shade_free_hours=shade_h)
+        fr = farm_design(fi)
     except ValidationError as e:
         st.error(f"Please check the settings: {e}")
         return
@@ -231,7 +236,39 @@ def _results(store, out: dict, eng: dict):
     cf = cash_flow(capex, mwh * 1000, ppa, years=years, degradation_pct=deg, om_per_year=capex * om_pct / 100,
                    discount_rate_pct=disc)
 
+    # ---- construction package (needs a safe string design) ----------------------------------------
+    ss = st.session_state
+    pi = PackageInputs(inverter_type=ss.get("f_pk_type", "string"), string_run_m=ss.get("f_pk_str", 60.0),
+                       lv_run_m=ss.get("f_pk_lv", 150.0), mv_run_m=ss.get("f_pk_mv", 500.0),
+                       line_to_nea_km=ss.get("f_pk_line", 2.0), ambient_max_c=ss.get("f_pk_amb", 40.0),
+                       module_max_fuse_a=eng.get("max_fuse", 30.0) if isinstance(eng, dict) else 30.0)
+    try:
+        pkg = build_farm_package(fr, sr, mod, inv, fi, pi)
+        pkg_error = None
+    except ValidationError as e:
+        pkg, pkg_error = None, str(e)
+    sections = farm_sections(pkg) if pkg else []
+
     # ---- outputs ------------------------------------------------------------------------------
+    with t_pkg:
+        st.markdown("The design and construction package for the contractor (EPC): **what to build, how it connects, "
+                    "what to order, how to build it, how to test it, how to run it.** The same content is in the PDF.")
+        with st.expander("Site distances and inverter type (change to match your land)"):
+            a, b, c = st.columns(3)
+            a.selectbox("Inverter type", ["string", "central"], key="f_pk_type",
+                        help="String inverters (e.g. 330 kVA, 1500 V) spread across the field; central inverters "
+                             "(MW size) need DC combiner boxes.")
+            b.number_input("Average string cable run (m)", 5.0, 500.0, 60.0, 5.0, key="f_pk_str")
+            c.number_input("Inverter → transformer cable (m)", 5.0, 2000.0, 150.0, 10.0, key="f_pk_lv")
+            a.number_input("Transformer → switchyard cable (m)", 10.0, 5000.0, 500.0, 50.0, key="f_pk_mv")
+            b.number_input("Line to the NEA substation (km)", 0.1, 100.0, 2.0, 0.1, key="f_pk_line",
+                           help="Distance along the planned 11/33 kV line to the NEA substation.")
+            c.number_input("Hottest air temperature at site (°C)", 20.0, 50.0, 40.0, 1.0, key="f_pk_amb",
+                           help="Used to derate cable current ratings.")
+        if pkg_error:
+            st.error(f"Construction package not possible yet: {pkg_error}")
+        else:
+            render_sections(sections)
     with t_energy:
         a, b, c, d = st.columns(4)
         a.metric("Energy per year (P50)", f"{mwh:,.0f} MWh")
@@ -309,6 +346,8 @@ def _results(store, out: dict, eng: dict):
         equations=["LCOE = (capex + Σ O&M_t/(1+r)^t) / Σ E_t/(1+r)^t", "E_t = E_1 × (1 − ageing)^(t−1)"],
         assumptions=["Prices are indicative Nepal values (see sources); no tax, loan, VAT or land cost included."],
         references=nd.SOURCES)
+    with t_book:
+        book_farm_tab(out, fr, sr, mod, inv, losses, cf, shade_free_hours=shade_h, capex_rs=capex)
     with t_report:
         plain = [
             f"A {out['mwp']:g} MWp solar farm at {out['location']} should produce about {mwh:,.0f} MWh a year "
@@ -331,12 +370,16 @@ def _results(store, out: dict, eng: dict):
         dicts = [r.to_dict() for r in results]
         safe = "".join(ch if ch.isalnum() else "_" for ch in out["name"])[:40] or "solar_farm"
         a, b = st.columns(2)
-        a.download_button("⬇️ Download the full report (PDF)", reports.build_pdf(meta, dicts, summary=plain),
+        a.download_button("⬇️ Download the full report (PDF)",
+                          reports.build_pdf(meta, dicts, summary=plain, sections=sections,
+                                            title="Solar Farm Design & Construction Package"),
                           f"{safe}_report.pdf", "application/pdf", type="primary", width="stretch",
                           key="f_pdf")
-        b.download_button("⬇️ Download an editable copy", reports.build_markdown(meta, dicts, summary=plain),
+        b.download_button("⬇️ Download an editable copy",
+                          reports.build_markdown(meta, dicts, summary=plain, sections=sections,
+                                                 title="Solar Farm Design & Construction Package"),
                           f"{safe}_report.md", "text/markdown", width="stretch", key="f_md")
-        if st.button("💾 Save to My projects", key="f_save"):
+        if st.button("💾 Save on this computer", key="f_save"):
             pid = out.get("pid")
             if pid and store.get_project(pid):
                 for c in store.list_calculations(pid):
@@ -347,4 +390,4 @@ def _results(store, out: dict, eng: dict):
                 out["pid"] = pid
             for r in results:
                 store.save_calculation(pid, "farm", r.name, r.to_dict())
-            st.success(f"Saved as project #{pid} under My projects & reports.")
+            st.success(f"Saved on this computer as project #{pid}.")

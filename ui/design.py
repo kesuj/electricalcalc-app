@@ -17,12 +17,15 @@ from ecalc import nepal_data as nd
 from ecalc import reports
 from ecalc.calc import CalcResult, Quantity as Q, ValidationError
 from ecalc.calc.home import CHEMISTRY, HomeInputs, home_design, plain_summary_home
+from ecalc.calc.install_home import InstallInputs, build_home_install
 from ecalc.finance import cash_flow
 from ecalc.nepal import site_choices, site_coords, site_name
 from ecalc.profile import LOAD_SHAPES, fetch_daily_profiles, shape_kw, simulate_day
 from ecalc.savings import MONTHS, monthly_bills
 from ecalc.solar_data import PVGISError, fetch_pvgis
 from ui import charts
+from ui.book_home import book_home_tab
+from ui.package_view import home_sections, render_sections
 from ui.common import get_store, page_header, render_result
 from ui.hints import H, missing, num
 
@@ -171,6 +174,25 @@ def design():
         flat_rate = c.number_input("Your energy rate (Rs/unit) *", 0.0, 100.0, value=None, placeholder="From bill, e.g. 11",
                                    help="Domestic three-phase: Rs 10.50 (wet season) / 11.50 (dry) per unit (ERC 2078).")
 
+    st.subheader("Step 7 · Installation details")
+    st.caption("Measure by walking the route the cable will take: one normal step is about 0.75 m.")
+    a, b, c, d = st.columns(4)
+    len_pv = a.number_input("Panels → inverter cable route (m) *", 1.0, 300.0, value=None, step=1.0,
+                            placeholder="Steps × 0.75", help="From the roof where the panels are, down to where "
+                            "the inverter will hang on the wall. Add a little for bends.")
+    len_db = b.number_input("Inverter → main switchboard (m) *", 0.5, 300.0, value=None, step=0.5,
+                            placeholder="Steps × 0.75", help="From the inverter to your main distribution board "
+                            "(the box with the MCBs).")
+    len_bat = c.number_input("Battery → inverter (m)" + (" *" if mode in ("hybrid_backup", "off_grid") else ""),
+                             0.3, 20.0, value=None, step=0.5, placeholder="Usually 1-2 (keep it short)",
+                             disabled=mode == "grid_tied", help="Put the battery right next to the inverter - short "
+                             "battery cables are safer and cheaper.")
+    len_earth = d.number_input("Inverter → earth pit (m)", 1.0, 200.0, value=None, step=1.0,
+                               placeholder="Optional - default 10", help="Where the earth electrode (earthing rod) "
+                               "will be driven into the ground, ideally in moist soil near the building.")
+    inv_loc = st.radio("Where will the inverter be mounted? *", ["Indoors (dry, ventilated wall)", "Outdoors (shaded wall)"],
+                       index=None, horizontal=True, help="Indoors is better: cooler and protected from rain.")
+
     eng = _engineer_settings(mode)
 
     if not st.button("Calculate my solar system", type="primary", width="stretch"):
@@ -191,6 +213,10 @@ def design():
             required["Appliances needed during power cuts"] = None
     if mode == "off_grid":
         required["Days without sun"] = autonomy
+    required.update({"Panels → inverter distance": len_pv, "Inverter → switchboard distance": len_db,
+                     "Inverter location": inv_loc})
+    if mode in ("hybrid_backup", "off_grid"):
+        required["Battery → inverter distance"] = len_bat
     if mode in ("grid_tied", "hybrid_backup"):
         required["NEA meter"] = meter
         if meter == "Three-phase":
@@ -224,6 +250,14 @@ def design():
                        outage_hours=outage or 4.0, system_voltage=eng["vsys"], dc_cable_length_m=eng["dc_len"],
                        available_area_m2=area or None)
         result = home_design(x)
+        ii = InstallInputs(voc=eng["voc"], vmp=eng["vmp"], isc=eng["isc"], imp=eng["imp"], beta_voc_pct=eng["beta"],
+                           module_max_fuse_a=eng["max_fuse"], battery_module_ah=eng["bat_ah"] or None,
+                           len_array_to_inverter_m=len_pv, len_battery_to_inverter_m=len_bat or 2.0,
+                           len_inverter_to_db_m=len_db, len_earth_pit_m=len_earth or 10.0, site_name=place,
+                           roof="RCC flat roof" if roof.startswith("Flat") else "Tin / sloping roof",
+                           inverter_location="indoor" if inv_loc.startswith("Indoor") else "outdoor",
+                           ac_phases=3 if meter == "Three-phase" else 1)
+        pkg = build_home_install(result, x, ii)
     except PVGISError as e:
         st.error(f"Could not get sunshine data: {e}")
         return
@@ -258,6 +292,10 @@ def design():
         "inverter_kw": o["inverter_w"].value / 1000, "chem": eng["chem"], "rs_per_kwh_batt": eng["rs_per_kwh_batt"],
         "battery_life": o["battery_life_years"].value if "battery_life_years" in o else None,
         "export_rs": eng["export_rs"], "vat": eng["vat"],
+        # for the 📘 Book method tab
+        "lat": lat, "lon": lon, "tilt": tilt, "aspect": aspect, "place": place, "inputs": x,
+        "monthly_psh": res.monthly_irr_kwh_m2_day, "temp_loss_pct": x.temp_loss_pct, "res_details": res.details,
+        "pkg": pkg,
     }
     _show_results(store)
 
@@ -275,12 +313,25 @@ def _engineer_settings(mode: str | None) -> dict:
                                       help="MPPT harvests ~20 % more (book §90); NEPQA requires ≥95 % MPPT efficiency.")
         e["inv_eff"] = d.number_input("Inverter efficiency (%)", 80.0, 99.0, 94.0, 0.5,
                                       help="NEPQA-2025 floor: ≥95 % peak / 94 % Euro for ≤5 kVA; ≥97/96 % above 5 kVA.")
+        st.markdown("**Panel datasheet** (printed on the back label of the panel)")
+        a, b, c, d, f, g = st.columns(6)
+        e["voc"] = a.number_input("Voc (V)", 5.0, 100.0, 49.5, 0.1, help="Open-circuit voltage at STC.")
+        e["vmp"] = b.number_input("Vmp (V)", 5.0, 100.0, 41.6, 0.1, help="Voltage at maximum power.")
+        e["isc"] = c.number_input("Isc (A)", 0.5, 30.0, 14.0, 0.1, help="Short-circuit current.")
+        e["imp"] = d.number_input("Imp (A)", 0.5, 30.0, 13.2, 0.1, help="Current at maximum power.")
+        e["beta"] = f.number_input("Voc temp. coeff. (%/°C)", -1.0, 0.0, -0.25, 0.01,
+                                   help="Temperature coefficient of Voc (negative).")
+        e["max_fuse"] = g.number_input("Max series fuse (A)", 5.0, 60.0, 25.0, 1.0,
+                                       help="'Maximum series fuse rating' on the datasheet.")
         a, b, c, d = st.columns(4)
         e["chem"] = a.selectbox("Battery type", list(CHEMISTRY), disabled=not battery)
         e["dod"] = b.number_input("Depth of discharge (%)", 10.0, 100.0, CHEMISTRY[e["chem"]]["dod"], 5.0,
                                   help=H["dod"][1], disabled=not battery)
         e["vsys"] = c.selectbox("Battery voltage", ["Auto (book cable rule)", 12, 24, 48], disabled=not battery)
         e["vsys"] = None if isinstance(e["vsys"], str) else e["vsys"]
+        e["bat_ah"] = st.number_input("Battery module size (Ah) - one battery unit", 0.0, 1000.0,
+                                      100.0 if e["chem"].startswith("LiFePO4") else 150.0, 10.0, disabled=not battery,
+                                      help="e.g. a 48 V 100 Ah LiFePO4 module, or a 12 V 150 Ah tubular battery.")
         e["dc_len"] = d.number_input("Battery/array cable length (m)", 0.5, 50.0, 3.0, 0.5, disabled=not battery,
                                      help="Longest low-voltage cable run, one way (book §87).")
         a, b, c, d = st.columns(4)
@@ -331,7 +382,16 @@ def _show_results(store):
     plain = plain_summary_home(r, saving, cf.simple_payback_years if cf else None, out["capex"])
     st.success("\n".join(f"- {line}" for line in plain))
 
-    tabs = st.tabs(["📅 Month by month", "🕐 A day with a power cut", "💰 Money", "🔧 Engineering details", "📄 Report"])
+    sections = home_sections(out["pkg"]) if out.get("pkg") else []
+    tabs = st.tabs(["🛠 Installation guide", "📅 Month by month", "🕐 A day with a power cut", "💰 Money",
+                    "🔧 Engineering details", "📄 Report", "📘 Book method"])
+    with tabs[0]:
+        st.markdown("Everything you need, in the order you need it: **what to buy → how it connects → how to install "
+                    "→ how to test → how to look after it.** The same content is in the PDF report.")
+        render_sections(sections)
+    with tabs[6]:
+        book_home_tab(out)
+    tabs = tabs[1:]
     with tabs[0]:
         rows = r.tables["Monthly generation vs use"]
         st.altair_chart(charts.monthly_energy([x["Solar (kWh)"] for x in rows], [x["Use (kWh)"] for x in rows]),
@@ -368,11 +428,15 @@ def _show_results(store):
                                   prepared_by=out["prepared"], notes=out["notes"])
         safe = "".join(ch if ch.isalnum() else "_" for ch in out["name"])[:40] or "project"
         a, b = st.columns(2)
-        a.download_button("⬇️ Download the full report (PDF)", reports.build_pdf(meta, results, summary=plain),
+        a.download_button("⬇️ Download the full report (PDF)",
+                          reports.build_pdf(meta, results, summary=plain, sections=sections,
+                                            title="Solar Installation Report"),
                           f"{safe}_report.pdf", "application/pdf", type="primary", width="stretch")
-        b.download_button("⬇️ Download an editable copy", reports.build_markdown(meta, results, summary=plain),
+        b.download_button("⬇️ Download an editable copy",
+                          reports.build_markdown(meta, results, summary=plain, sections=sections,
+                                                 title="Solar Installation Report"),
                           f"{safe}_report.md", "text/markdown", width="stretch")
-        st.caption(f"Saved as project #{out['pid']} under My projects & reports.")
+        st.caption(f"Saved on this computer as project #{out['pid']}.")
 
 
 def _day_tab(out: dict):
