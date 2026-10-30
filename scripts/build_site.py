@@ -352,12 +352,41 @@ def app_page(files: dict[str, str]) -> str:
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(config.APP_NAME)} - app</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@{STLITE}/build/stlite.css">
-<style>body{{margin:0;font-family:system-ui,sans-serif}}#boot{{max-width:560px;margin:18vh auto;padding:0 16px;text-align:center;color:#334}}
-#boot .bar{{height:6px;background:#e6ebf2;border-radius:9px;overflow:hidden;margin:18px 0}}#boot .bar i{{display:block;height:100%;width:35%;background:#f2a516;animation:m 1.4s infinite ease-in-out}}
-@keyframes m{{0%{{margin-left:-35%}}100%{{margin-left:100%}}}}</style></head>
-<body><div id="root"><div id="boot"><h2>⚡ Loading the solar designer…</h2><div class="bar"><i></i></div>
-<p>The whole app runs inside your browser (about 30-60 s the first time, faster after). Nothing you type is sent anywhere.</p>
+<style>
+body{{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}}
+/* friendly cover while the app starts; hides the technical "Loading Pyodide / Installing packages" messages */
+#cover{{position:fixed;inset:0;z-index:2147483647;background:#f6f8fb;color:#111a2b;display:grid;place-items:center;padding:16px;
+transition:opacity .35s ease}}#cover.done{{opacity:0;pointer-events:none}}
+#cover .box{{max-width:460px;width:100%;text-align:center}}#cover .sun{{font-size:44px;animation:spin 6s linear infinite;display:inline-block}}
+#cover h2{{margin:12px 0 6px;font-size:1.4rem}}#cover p{{color:#566175;margin:6px 0}}
+#cover .bar{{height:8px;background:#e2e7ef;border-radius:9px;overflow:hidden;margin:20px 0 8px}}
+#cover .bar i{{display:block;height:100%;width:0;background:#f2a516;border-radius:9px;transition:width .8s ease}}
+#cover .step{{font-weight:600;color:#16406b;min-height:1.5em}}#cover a{{color:#16406b}}
+@keyframes spin{{to{{transform:rotate(360deg)}}}}
+@media (prefers-color-scheme:dark){{#cover{{background:#0d131d;color:#e7edf6}}#cover p{{color:#9aa7bb}}#cover .bar{{background:#253247}}#cover .step,#cover a{{color:#8ab8ea}}}}
+@media (prefers-reduced-motion:reduce){{#cover .sun{{animation:none}}}}
+</style></head>
+<body><div id="cover" role="status" aria-live="polite"><div class="box"><div class="sun">☀️</div>
+<h2>Getting the solar designer ready…</h2><div class="bar"><i id="pct"></i></div><div class="step" id="step">Starting…</div>
+<p>The first visit takes about half a minute (longer on slow internet) because the whole calculator is loaded into
+your browser. Next time it is quicker. Nothing you type is ever sent anywhere.</p>
 <p><a href="../">← Back to the website</a></p></div></div>
+<div id="root"></div>
+<script>
+(function(){{
+  var steps=[[0,"Downloading the calculator…",8],[5,"Downloading the calculator…",30],[10,"Preparing the solar data for 27 Nepal cities…",55],
+             [16,"Setting up the drawings and PDF report…",75],[24,"Almost there…",90],[45,"Still working - slow internet can take a minute or two…",95]];
+  var t0=Date.now(),cover=document.getElementById("cover"),step=document.getElementById("step"),pct=document.getElementById("pct");
+  var tick=setInterval(function(){{var s=(Date.now()-t0)/1000,cur=steps[0];steps.forEach(function(x){{if(s>=x[0])cur=x}});
+    step.textContent=cur[1];pct.style.width=cur[2]+"%";}},400);
+  function ready(){{return document.querySelector('[data-testid="stSidebarNav"]')&&document.querySelector('[data-testid="stMain"] h1');}}
+  var obs=new MutationObserver(function(){{if(ready()){{finish()}}}});
+  function finish(){{obs.disconnect();clearInterval(tick);pct.style.width="100%";step.textContent="Ready!";
+    setTimeout(function(){{cover.classList.add("done");setTimeout(function(){{cover.remove()}},400)}},250);}}
+  obs.observe(document.getElementById("root"),{{childList:true,subtree:true}});
+  setTimeout(function(){{if(document.body.contains(cover))finish()}},180000);
+}})();
+</script>
 <script type="module">
 import {{ mount }} from "https://cdn.jsdelivr.net/npm/@stlite/browser@{STLITE}/build/stlite.js";
 mount({json.dumps(cfg)}, document.getElementById("root"));
